@@ -1,0 +1,7 @@
+M	database/migrations/2025_12_29_034937_create_pelanggan_table.php
+M	database/migrations/2025_12_29_034938_create_pegawai_table.php
+M	database/migrations/2025_12_29_034939_create_merk_table.php
+M	database/migrations/2025_12_29_034940_create_barang_table.php
+M	database/migrations/2025_12_29_034940_create_notajual_table.php
+M	database/migrations/2025_12_29_034941_create_notajual_detil_table.php
+M	routes/web.php
