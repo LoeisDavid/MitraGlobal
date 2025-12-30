@@ -50,14 +50,25 @@
                     </tr>
                   </thead>
                   <tbody>
+                  @forelse ($kategori as $row)
                     <tr>
-                      <td>N098</td>
-                      <td>ATK</td>
+                      <td>{{ $row->kode_kategori }}</td>
+                      <td>{{ $row->nama }}</td>
                       <td class="text-center">
-                        <a class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus kategori ini?')"><i class="fas fa-trash"></i></button>
+                        <a href="{{ route("kategori.edit", $row->kode_kategori) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route('kategori.destroy', $row->kode_kategori) }}" method="POST" class="d-inline">
+                          @csrf
+                          @method('DELETE')
+                          <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus kategori ini?')"><i class="fas fa-trash"></i>
+                        </button>
+                        </form>
                       </td>
                     </tr>
+                  @empty
+                    <tr>
+                      <td colspan="3" class="text-center">Tidak ada data kategori.</td>
+                    </tr>
+                  @endforelse
                   </tbody>
                 </table>
               </div>
