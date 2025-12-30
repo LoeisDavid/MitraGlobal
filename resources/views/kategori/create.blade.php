@@ -19,15 +19,16 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form>
+              <form action="{{ route('kategori.store') }}" method="POST">
+                @csrf
                 <div class="card-body">
                   <div class="form-group">
                     <label for="kode_kategori">Kode Kategori</label>
-                    <input type="text" class="form-control" id="kode_kategori" placeholder="Masukkan Kode Kategori">
+                    <input type="text" class="form-control" id="kode_kategori" name="kode_kategori" placeholder="Masukkan Kode Kategori">
                   </div>
                   <div class="form-group">
                     <label for="nama_kategori">Nama Kategori</label>
-                    <input type="text" class="form-control" id="nama_kategori" placeholder="Masukkan Nama Kategori">
+                    <input type="text" class="form-control" id="nama_kategori" name="nama" placeholder="Masukkan Nama Kategori" required>
                   </div>
                 </div>
                 <!-- /.card-body -->
