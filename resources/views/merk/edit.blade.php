@@ -21,6 +21,7 @@
               <!-- form start -->
               <form action="{{ route("merk.update", $merk->kode_merk) }}" method="post">
                 @csrf
+                @method('PUT')
                 <div class="card-body">
                   <div class="form-group">
                     <label for="kode_Merk">Kode Merk</label>
