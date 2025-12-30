@@ -13,7 +13,7 @@ Route::prefix('kategori')->name('kategori.')->group(function () {
     Route::get('/create', [Kategori::class, 'create'])->name('create');
     Route::post('/store', [Kategori::class, 'store'])->name('store');
     Route::get('/{id}/edit', [Kategori::class, 'edit'])->name('edit');
-    Route::post('/{id}/update', [Kategori::class, 'update'])->name('update');
+    Route::put('/{id}/update', [Kategori::class, 'update'])->name('update');
     Route::delete('/{id}/destroy', [Kategori::class, 'destroy'])->name('destroy');
 });
 
