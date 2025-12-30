@@ -37,6 +37,15 @@
                 </p>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a href="{{ route("pelanggan.index") }}" class="nav-link">
+                <i class="nav-icon fas fa-users"></i>
+                <p>
+                    Pelanggan
+                </p>
+                </a>
+            </li>
         <!-- End Master Data -->
         <li class="nav-header">EXAMPLES</li>
         </ul>

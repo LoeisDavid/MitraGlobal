@@ -1,0 +1,91 @@
+@extends('layouts.app')
+
+@section('title', 'Pelanggan')
+@section('page-title', 'Pelanggan')
+
+@section('breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item active">Pelanggan</li>
+    </ol>
+@endsection
+
+@section('content')
+    <div class="row">
+        <div class="col-12">
+        <!-- tabel Pelanggan -->
+            <div class="card">
+            <!-- card header -->
+              <div class="card-header">
+                <h3 class="card-title p-1">Data Pelanggan</h3>
+
+                <div class="card-tools d-flex align-items-center">
+                    <!-- Tombol Tambah Pelanggan -->
+                    <a href="{{ route("pelanggan.create") }}" class="btn btn-primary btn-sm mr-2">
+                        <i class="fas fa-plus mr-1"></i> Tambah Pelanggan
+                    </a>
+                    
+                    <!-- Form Pencarian -->
+                    <form class="d-flex">
+                        <div class="input-group input-group-sm" style="width: 150px;">
+                            <input type="text" name="table_search" class="form-control" placeholder="Search">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-default">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+              </div>
+              <!-- end card-header -->
+
+              <!-- card body -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th>Kode Pelanggan</th>
+                      <th>Nama Pelanggan</th>
+                      <th>Alamat</th>
+                      <th>Telepon</th>
+                      <th class="text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    
+                    <tr>
+                      <td>tes</td>
+                      <td>tes</td>
+                      <td>tes</td>
+                      <td>tes</td>
+                      <td class="text-center">
+                        <a href="#}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="#" method="POST" class="d-inline">
+                          
+                          <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus Pelanggan ini?')"><i class="fas fa-trash"></i>
+                        </button>
+                        </form>
+                      </td>
+                    </tr>
+                  
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+
+                <!-- card footer -->
+                <div class="card-footer clearfix mt-2">
+                    <ul class="pagination pagination-sm m-0 float-right">
+                    <li class="page-item"><a class="page-link" href="#">«</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">»</a></li>
+                    </ul>
+                </div>
+                <!-- end card footer -->
+            </div>
+            <!-- end tabel Pelanggan -->
+          </div>
+    </div>
+@endsection
