@@ -1,27 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Kategori')
-@section('page-title', 'Kategori')
+@section('title', 'Merk')
+@section('page-title', 'Merk')
 
 @section('breadcrumb')
     <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item active">Kategori</li>
+        <li class="breadcrumb-item active">Merk</li>
     </ol>
 @endsection
 
 @section('content')
     <div class="row">
         <div class="col-12">
-        <!-- tabel kategori -->
+        <!-- tabel Merk -->
             <div class="card">
             <!-- card header -->
               <div class="card-header">
-                <h3 class="card-title p-1">Data Kategori</h3>
+                <h3 class="card-title p-1">Data Merk</h3>
 
                 <div class="card-tools d-flex align-items-center">
-                    <!-- Tombol Tambah Kategori -->
-                    <a href="{{ route("kategori.create") }}" class="btn btn-primary btn-sm mr-2">
-                        <i class="fas fa-plus mr-1"></i> Tambah Kategori
+                    <!-- Tombol Tambah Merk -->
+                    <a href="{{ route("merk.create") }}" class="btn btn-primary btn-sm mr-2">
+                        <i class="fas fa-plus mr-1"></i> Tambah Merk
                     </a>
                     
                     <!-- Form Pencarian -->
@@ -44,20 +44,32 @@
                 <table class="table table-hover text-nowrap">
                   <thead>
                     <tr>
-                      <th>Kode Kategori</th>
-                      <th>Nama Kategori</th>
+                      <th>Kode Merk</th>
+                      <th>Nama Merk</th>
                       <th class="text-center">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
+                    @forelse($data as $merk)
                     <tr>
-                      <td>N098</td>
-                      <td>ATK</td>
+                      <td>{{ $merk->kode_merk }}</td>
+                      <td>{{ $merk->nama }}</td>
                       <td class="text-center">
-                        <a class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus kategori ini?')"><i class="fas fa-trash"></i></button>
+                        <a href="{{ route('merk.edit', $merk->kode_merk) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        
+                        <form action="{{ route('merk.destroy', $merk->kode_merk) }}" method="post" style="display:inline;">
+                          @csrf
+                          @method('DELETE')
+                          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                            <i class="fas fa-trash"></i>
+                          </button>
                       </td>
                     </tr>
+                    @empty
+                    <tr>
+                      <td colspan="3" class="text-center">Data Merk tidak tersedia</td>
+                    </tr>
+                    @endforelse
                   </tbody>
                 </table>
               </div>
@@ -75,7 +87,7 @@
                 </div>
                 <!-- end card footer -->
             </div>
-            <!-- end tabel kategori -->
+            <!-- end tabel Merk -->
           </div>
     </div>
 @endsection

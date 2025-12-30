@@ -17,11 +17,17 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->integer('diskon');
 
-            $table->foreignId('notajual_no_nota')
-                ->constrained('notajual', 'no_nota');
+            $table->string('notajual_no_nota');
+            $table->string('barang_kode_barang');
+            $table->foreign('notajual_no_nota')
+                ->references('no_nota')
+                ->on('notajual');
 
-            $table->foreignId('barang_kode_barang')
-                ->constrained('barang', 'kode_barang');
+            $table->foreign('barang_kode_barang')
+                ->references('kode_barang')
+                ->on('barang');
+
+            $table->timestamps();
         });
     }
 
