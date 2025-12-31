@@ -3,6 +3,7 @@
 use App\Http\Controllers\Kategori;
 use App\Http\Controllers\Merk;
 use App\Http\Controllers\Pelanggan;
+use App\Http\Controllers\Barang;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -34,4 +35,13 @@ Route::prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/{kode_pelanggan}/edit', [Pelanggan::class, 'edit'])->name('edit');
     Route::put('/{kode_pelanggan}/update', [Pelanggan::class, 'update'])->name('update');
     Route::delete('/{kode_pelanggan}/destroy', [Pelanggan::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('barang')->name('barang.')->group(function () {
+    Route::get('/', [Barang::class, 'index'])->name('index');
+    Route::get('/create', [Barang::class, 'create'])->name('create');
+    Route::post('/store', [Barang::class, 'store'])->name('store');
+    Route::get('/{kode_barang}/edit', [Barang::class, 'edit'])->name('edit');
+    Route::put('/{kode_barang}/update', [Barang::class, 'update'])->name('update');
+    Route::delete('/{kode_barang}/destroy', [Barang::class, 'destroy'])->name('destroy');
 });
