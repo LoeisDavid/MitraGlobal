@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang_model;
 use App\Http\Requests\StoreBarangRequest;
 use App\Http\Requests\UpdateBarangRequest;
+use Illuminate\Http\Request;
 
 class Barang extends Controller
 {
@@ -15,16 +16,15 @@ class Barang extends Controller
     {
         $barang = Barang_model::with(['merk', 'kategori'])->get();
 
-        return route('barang.index', compact('barang'));
+        return view('barang.index', compact('barang'));
     }
 
     /**
      * Show the form for creating a new resource.
-     * (biasanya kosong kalau API)
      */
     public function create()
     {
-        //
+        return view('barang.create');
     }
 
     /**
@@ -34,7 +34,7 @@ class Barang extends Controller
     {
         $barang = Barang_model::create($request->validated());
 
-        return route('barang.show', ['barang' => $barang->kode_barang]);
+        return view('barang.show', ['barang' => $barang->kode_barang]);
     }
 
     /**
@@ -42,11 +42,7 @@ class Barang extends Controller
      */
     public function show(string $id)
     {
-        $barang = Barang_model::with(['merk', 'kategori'])
-            ->where('kode_barang', $id)
-            ->firstOrFail();
-
-        return route('barang.show', compact('barang'));
+        //
     }
 
     /**
@@ -57,7 +53,7 @@ class Barang extends Controller
     {
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
 
-        return route('barang.edit', compact('barang'));
+        return view('barang.edit', compact('barang'));
     }
 
     /**
@@ -68,7 +64,7 @@ class Barang extends Controller
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
         $barang->update($request->validated());
 
-        return route('barang.index');
+        return view('barang.index');
     }
 
     /**
@@ -79,6 +75,6 @@ class Barang extends Controller
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
         $barang->delete();
 
-        return route('barang.index');
+        return view('barang.index');
     }
 }
