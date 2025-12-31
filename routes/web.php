@@ -31,7 +31,7 @@ Route::prefix('pelanggan')->name('pelanggan.')->group(function () {
     Route::get('/', [Pelanggan::class, 'index'])->name('index');
     Route::get('/create', [Pelanggan::class, 'create'])->name('create');
     Route::post('/store', [Pelanggan::class, 'store'])->name('store');
-    Route::get('/{id}/edit', [Pelanggan::class, 'edit'])->name('edit');
-    Route::put('/{id}/update', [Pelanggan::class, 'update'])->name('update');
-    Route::delete('/{id}/destroy', [Pelanggan::class, 'destroy'])->name('destroy');
+    Route::get('/{kode_pelanggan}/edit', [Pelanggan::class, 'edit'])->name('edit');
+    Route::put('/{kode_pelanggan}/update', [Pelanggan::class, 'update'])->name('update');
+    Route::delete('/{kode_pelanggan}/destroy', [Pelanggan::class, 'destroy'])->name('destroy');
 });
