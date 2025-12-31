@@ -52,22 +52,27 @@
                     </tr>
                   </thead>
                   <tbody>
-                    
+                @forelse ($pelanggan as $row)    
                     <tr>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
+                      <td>{{ $row->kode_pelanggan }}</td>
+                      <td>{{ $row->nama }}</td>
+                      <td>{{ $row->alamat }}</td>
+                      <td>{{ $row->telepon }}</td>
                       <td class="text-center">
-                        <a href="#}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <form action="#" method="POST" class="d-inline">
-                          
+                        <a href="{{ route("pelanggan.edit", $row->kode_pelanggan) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route("pelanggan.destroy", $row->kode_pelanggan) }}" method="POST" class="d-inline">
+                          @csrf
+                          @method('DELETE')
                           <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus Pelanggan ini?')"><i class="fas fa-trash"></i>
                         </button>
                         </form>
                       </td>
                     </tr>
-                  
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center">Data pelanggan tidak tersedia</td>
+                    </tr>
+                @endforelse
                   </tbody>
                 </table>
               </div>

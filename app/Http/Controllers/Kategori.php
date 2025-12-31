@@ -67,7 +67,7 @@ class Kategori extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'kode_kategori' => 'required|unique:kategori,kode_kategori',
+            'kode_kategori' => 'required|unique:kategori,kode_kategori' . $id . ',kode_kategori',
             'nama' => 'required',
         ]);
 
