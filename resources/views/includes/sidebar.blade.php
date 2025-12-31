@@ -21,10 +21,10 @@
         <!-- Master Data -->
         <li class="nav-header">MASTER DATA</li>
             <li class="nav-item">
-                <a href="pages/gallery.html" class="nav-link">
-                <i class="nav-icon far fa-image"></i>
+                <a href="{{ route("barang.index") }}" class="nav-link">
+                <i class="nav-icon fas fa-box"></i>
                 <p>
-                    Gallery
+                    Barang
                 </p>
                 </a>
             </li>
