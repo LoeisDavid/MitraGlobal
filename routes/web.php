@@ -5,7 +5,6 @@ use App\Http\Controllers\Merk;
 use App\Http\Controllers\Pelanggan;
 use App\Http\Controllers\Barang;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Barang;
 
 Route::get('/', function () {
     return view('welcome');

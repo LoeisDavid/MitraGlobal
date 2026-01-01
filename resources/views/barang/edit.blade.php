@@ -19,15 +19,16 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form action="{{ route('barang.update') }}" method="POST">
+              <form action="{{ route('barang.update', $barang->kode_barang) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card-body">
                     <div class="row">
                         <!-- kode barang -->
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="kode_barang">Kode Barang</label>
-                                <input type="text" class="form-control" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang">
+                                <input type="text" class="form-control" value="{{ $barang->kode_barang }}" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang">
                             </div>
                         </div>
                         <!-- end kode barang -->
@@ -36,7 +37,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="nama_barang">Nama Barang</label>
-                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang">
+                                <input type="text" class="form-control" value="{{ $barang->nama }}" id="nama_barang" name="nama" placeholder="Masukkan Nama Barang">
                             </div>
                         </div>
                         <!-- end nama barang -->
@@ -46,9 +47,12 @@
                             <!-- select -->
                             <div class="form-group">
                                 <label>Kategori</label>
-                                <select class="form-control">
-                                <option>option 1</option>
-                                <option>option 2</option>
+                                <select class="form-control" name="kategori_kode_kategori">
+                                @forelse ($kategoris as $kategori)
+                                    <option value="{{ $kategori->kode_kategori }}" {{ $kategori->kode_kategori == $barang->kategori_kode_kategori ? 'selected' : '' }}>{{ $kategori->nama }}</option>
+                                @empty
+                                    <option>Data Kategori tidak tersedia</option>
+                                @endforelse
                                 </select>
                             </div>
                         </div>
@@ -59,9 +63,12 @@
                             <!-- select -->
                             <div class="form-group">
                                 <label>Merek</label>
-                                <select class="form-control">
-                                <option>option 1</option>
-                                <option>option 2</option>
+                                <select class="form-control" name="merk_kode_merk">
+                                @forelse ($merks as $merk)
+                                    <option value="{{ $merk->kode_merk }}" {{ $merk->kode_merk == $barang->merk_kode_merk ? 'selected' : '' }}>{{ $merk->nama }}</option>
+                                @empty
+                                    <option>Data Merek tidak tersedia</option>
+                                @endforelse
                                 </select>
                             </div>
                         </div>
@@ -71,7 +78,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="harga_jual">Harga Jual</label>
-                                <input type="number" class="form-control" id="harga_jual" name="harga_jual" placeholder="Masukkan Harga Jual">
+                                <input type="number" class="form-control" value="{{ $barang->harga_jual }}" id="harga_jual" name="harga_jual" placeholder="Masukkan Harga Jual">
                             </div>
                         </div>
                         <!-- end harga jual -->
@@ -80,7 +87,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="stok">Stok</label>
-                                <input type="number" class="form-control" id="stok" name="stok" placeholder="Masukkan Stok">
+                                <input type="number" class="form-control" value="{{ $barang->stok }}" id="stok" name="stok" placeholder="Masukkan Stok">
                             </div>
                         </div>
                         <!-- end stok -->
