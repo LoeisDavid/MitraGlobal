@@ -32,12 +32,13 @@ class Kategori extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_kategori' => 'required|unique:kategori,kode_kategori',
             'nama' => 'required',
         ]);
 
+        $kode_kategori = $this->generateCode($request->nama);
+
         Kategori_model::create([
-            'kode_kategori' => Str::upper($request->kode_kategori),
+            'kode_kategori' => Str::upper($kode_kategori),
             'nama' => $request->nama,
         ]);
 

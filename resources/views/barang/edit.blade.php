@@ -27,8 +27,8 @@
                         <!-- kode barang -->
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="kode_barang">Kode Barang</label>
-                                <input type="text" class="form-control" value="{{ $barang->kode_barang }}" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang">
+                                <!-- <label for="kode_barang">Kode Barang</label> -->
+                                <input type="text" class="form-control" value="{{ $barang->kode_barang }}" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang" disabled>
                             </div>
                         </div>
                         <!-- end kode barang -->

@@ -26,8 +26,8 @@
                         <!-- kode barang -->
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="kode_barang">Kode Barang</label>
-                                <input type="text" class="form-control" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang">
+                                <!-- <label for="kode_barang">Kode Barang</label> -->
+                                <input type="text" class="form-control" id="kode_barang" name="kode_barang" placeholder="Masukkan Kode Barang" value="Z"hidden>
                             </div>
                         </div>
                         <!-- end kode barang -->
