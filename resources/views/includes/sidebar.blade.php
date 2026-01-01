@@ -47,7 +47,15 @@
                 </a>
             </li>
         <!-- End Master Data -->
-        <li class="nav-header">EXAMPLES</li>
+        <li class="nav-header">Transaksi</li>
+            <li class="nav-item">
+                <a href="{{ route("nota.index") }}" class="nav-link">
+                <i class="nav-icon fas fa-shopping-cart"></i>
+                <p>
+                    Nota
+                </p>
+                </a>
+            </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
