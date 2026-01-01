@@ -13,7 +13,7 @@
                with font-awesome or any other icon font library -->
 
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="{{ route("dashboard.index") }}" class="nav-link">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>Dashboard</p>
           </a>
@@ -31,9 +31,18 @@
 
             <li class="nav-item">
                 <a href="{{ route("kategori.index") }}" class="nav-link">
-                <i class="nav-icon fas fa-tags"></i>
+                <i class="nav-icon fas fa-list"></i>
                 <p>
                     Kategori
+                </p>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="{{ route("merk.index") }}" class="nav-link">
+                <i class="nav-icon fas fa-tags"></i>
+                <p>
+                    Merk
                 </p>
                 </a>
             </li>
@@ -47,12 +56,24 @@
                 </a>
             </li>
         <!-- End Master Data -->
+
+        <!-- Transaksi -->
         <li class="nav-header">Transaksi</li>
             <li class="nav-item">
                 <a href="{{ route("nota.index") }}" class="nav-link">
-                <i class="nav-icon fas fa-shopping-cart"></i>
+                <i class="nav-icon fas fa-receipt"></i>
                 <p>
                     Nota
+                </p>
+                </a>
+            </li>
+        <!-- End Transaksi -->
+        <li class="nav-header">Manajemen Pegawai</li>
+            <li class="nav-item">
+                <a href="{{ route("pegawai.index") }}" class="nav-link">
+                <i class="nav-icon fas fa-user-tie"></i>
+                <p>
+                    Pegawai
                 </p>
                 </a>
             </li>

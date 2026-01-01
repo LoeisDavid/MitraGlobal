@@ -1,15 +1,21 @@
 <?php
 
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Kategori;
 use App\Http\Controllers\Merk;
 use App\Http\Controllers\Pelanggan;
 use App\Http\Controllers\Barang;
 use App\Http\Controllers\Nota;
 use App\Http\Controllers\NotaBarang;
+use App\Http\Controllers\Pegawai;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('dashboard')->name('dashboard.')->group(function () {
+    Route::get('/', [Dashboard::class, 'index'])->name('index');
 });
 
 Route::prefix('kategori')->name('kategori.')->group(function () {
@@ -61,4 +67,13 @@ Route::prefix('nota_barang')->name('nota_barang.')->group(function () {
     Route::get('/{id}/edit', [NotaBarang::class, 'edit'])->name('edit');
     Route::put('/{id}/update', [NotaBarang::class, 'update'])->name('update');
     Route::delete('/{id}/destroy', [NotaBarang::class, 'destroy'])->name('destroy');
+});
+
+Route::prefix('pegawai')->name('pegawai.')->group(function () {
+    Route::get('/', [Pegawai::class, 'index'])->name('index');
+    Route::get('/create', [Pegawai::class, 'create'])->name('create');
+    Route::post('/store', [Pegawai::class, 'store'])->name('store');
+    Route::get('/{kode_pegawai}/edit', [Pegawai::class, 'edit'])->name('edit');
+    Route::put('/{kode_pegawai}/update', [Pegawai::class, 'update'])->name('update');
+    Route::delete('/{kode_pegawai}/destroy', [Pegawai::class, 'destroy'])->name('destroy');
 });
