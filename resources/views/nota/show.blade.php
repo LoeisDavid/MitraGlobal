@@ -17,7 +17,7 @@
                 <div class="col-12">
                   <h4>
                     <i class="fas fa-globe"></i> Mitra Global
-                    <small class="float-right">Tanggal: 2 Okt 2014</small>
+                    <small class="float-right">Tanggal: {{ \Carbon\Carbon::parse($nota->tanggal)->translatedFormat('d F Y') }}</small>
                   </h4>
                 </div>
                 <!-- /.col -->
@@ -37,15 +37,14 @@
                 <div class="col-sm-4 invoice-col">
                   Pelanggan
                   <address>
-                    <strong>John Doe</strong><br>
-                    795 Folsom Ave, Suite 600<br>
-                    San Francisco, CA 94107<br>
-                    Phone: (555) 539-1037<br>
+                    <strong>{{ $nota->pelanggan->nama }}</strong><br>
+                    {{ $nota->pelanggan->alamat }}<br>
+                    Telepon: {{ $nota->pelanggan->telepon }}<br>
                   </address>
                 </div>
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
-                  <b>No Nota #007612</b><br>
+                  <b>No Nota #{{ $nota->no_nota }}</b><br>
                 </div>
                 <!-- /.col -->
               </div>
@@ -62,6 +61,7 @@
                       <th class="text-right">Qty</th>
                       <th class="text-right">Diskon</th>
                       <th class="text-right">Subtotal</th>
+                      <th class="text-center">Aksi</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -71,6 +71,18 @@
                       <td class="text-right">1</td>
                       <td class="text-right">10</td>
                       <td class="text-right">$64.50</td>
+                      <td class="text-center">
+                        <a href="#" class="btn btn-sm btn-warning text-white">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form action="#" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                      </td>
                     </tr>
                     </tbody>
                   </table>
@@ -82,7 +94,7 @@
               <div class="row">
                 <!-- accepted payments column -->
                 <div class="col-6">
-                    <a href="{{ route("nota_barang.create") }}" class="btn btn-primary btn-sm">
+                    <a href="#" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah Barang
                     </a>
                 </div>

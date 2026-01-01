@@ -29,19 +29,20 @@ class Merk extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_merk' => 'required|string|max:10',
             'nama' => 'required|string|max:100',
         ]);
 
-        if ($request->kode_merk) {
-            $merk = Merk_model::where('kode_merk', $request->kode_merk)->first();
+        $kode_merk = $this->generateCode($request->nama);
+
+        if ($kode_merk) {
+            $merk = Merk_model::where('kode_merk', $kode_merk)->first();
             if ($merk) {
                 return redirect()->back()->with('error', 'Kode Merk sudah digunakan.');
             }
         }
 
         Merk_model::create([
-            'kode_merk' => $request->kode_merk,
+            'kode_merk' => $kode_merk,
             'nama' => $request->nama,
         ]);
 

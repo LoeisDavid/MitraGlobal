@@ -15,11 +15,12 @@ class BarangSeeder extends Seeder
     {
         DB::table('barang')->insert([
             [
+                'kode_barang' => 'BRG001',
                 'barcode' => '1234567890123',
                 'nama' => 'Mouse',
                 'harga_jual' => 150000,
                 'stok' => 50,
-                'merk_kode_merk' => 2,
+                'merk_kode_merk' => 'MRK002',
                 'kategori_kode_kategori' => 'EL'
             ]
         ]);

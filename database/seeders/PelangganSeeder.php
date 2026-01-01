@@ -15,11 +15,13 @@ class PelangganSeeder extends Seeder
     {
         DB::table('pelanggan')->insert([
             [
+                'kode_pelanggan' => 'PLG001',
                 'nama' => 'Budi',
                 'alamat' => 'Jakarta',
                 'telepon' => '08123456789'
             ],
             [
+                'kode_pelanggan' => 'PLG002',
                 'nama' => 'Siti',
                 'alamat' => 'Bandung',
                 'telepon' => '08234567890'
