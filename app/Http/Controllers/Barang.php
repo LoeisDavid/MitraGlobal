@@ -14,9 +14,9 @@ class Barang extends Controller
      */
     public function index()
     {
-        $barang = Barang_model::with(['merk', 'kategori'])->get();
+        $barangs = Barang_model::with(['merk', 'kategori'])->get();
 
-        return view('barang.index', compact('barang'));
+        return view('barang.index', compact('barangs'));
     }
 
     /**
@@ -24,7 +24,9 @@ class Barang extends Controller
      */
     public function create()
     {
-        return view('barang.create');
+        $merks = \App\Models\Merk_model::all();
+        $kategoris = \App\Models\Kategori_model::all();
+        return view('barang.create', compact('merks', 'kategoris'));
     }
 
     /**
@@ -32,9 +34,10 @@ class Barang extends Controller
      */
     public function store(StoreBarangRequest $request)
     {
-        $barang = Barang_model::create($request->validated());
+        $data = $request->validated();
+        $barang = Barang_model::create($data);
 
-        return view('barang.show', ['barang' => $barang->kode_barang]);
+        return view('barang.index', ['barang' => $barang->kode_barang]);
     }
 
     /**
@@ -52,8 +55,10 @@ class Barang extends Controller
     public function edit(string $id)
     {
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
+        $kategoris = \App\Models\Kategori_model::all();
+        $merks = \App\Models\Merk_model::all();
 
-        return view('barang.edit', compact('barang'));
+        return view('barang.edit', compact('barang', 'kategoris', 'merks'));
     }
 
     /**
@@ -61,10 +66,11 @@ class Barang extends Controller
      */
     public function update(UpdateBarangRequest $request, string $id)
     {
+        $data = $request->validated();
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
-        $barang->update($request->validated());
+        $barang->update($data);
 
-        return view('barang.index');
+        return redirect()->route('barang.index');
     }
 
     /**
@@ -75,6 +81,6 @@ class Barang extends Controller
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
         $barang->delete();
 
-        return view('barang.index');
+        return redirect()->route('barang.index');
     }
 }

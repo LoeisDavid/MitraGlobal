@@ -15,12 +15,12 @@ class StoreBarangRequest extends FormRequest
     {
         return [
             'kode_barang' => 'required|string|max:255|unique:barang,kode_barang',
-            'barcode' => 'nullable|string|size:13|unique:barang,barcode',
+            'barcode' => 'nullable',
             'nama' => 'required|string|max:45',
             'harga_jual' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
-            'merk_kode_merk' => 'required|string|exists:merk,kode_merk',
-            'kategori_kode_kategori' => 'required|string|size:2|exists:kategori,kode_kategori',
+            'merk_kode_merk' => 'required',
+            'kategori_kode_kategori' => 'required'
         ];
     }
 
