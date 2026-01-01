@@ -35,9 +35,10 @@ class Barang extends Controller
     public function store(StoreBarangRequest $request)
     {
         $data = $request->validated();
+        $data['kode_barang'] = $data['merk_kode_merk'].'-'.$data['kategori_kode_kategori'].'-'.$this->generateCode($data['nama']);
         $barang = Barang_model::create($data);
 
-        return view('barang.index', ['barang' => $barang->kode_barang]);
+        return redirect()->route('barang.index', ['barang' => $barang->kode_barang]);
     }
 
     /**
@@ -68,6 +69,7 @@ class Barang extends Controller
     {
         $data = $request->validated();
         $barang = Barang_model::where('kode_barang', $id)->firstOrFail();
+         $data['kode_barang'] = $data['merk_kode_merk'].'-'.$data['kategori_kode_kategori'].'-'.$this->generateCode($data['nama']);
         $barang->update($data);
 
         return redirect()->route('barang.index');
