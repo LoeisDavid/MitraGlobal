@@ -54,23 +54,29 @@
                     </tr>
                   </thead>
                   <tbody>
-                    
+                    @forelse ($barangs as $barang)
                     <tr>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
+                      <td>{{ $barang->kode_barang }}</td>
+                      <td>{{ $barang->nama }}</td>
+                      <td>{{ $barang->kategori_kode_kategori }}</td>
+                      <td>{{ $barang->merk_kode_merk }}</td>
+                      <td>{{ $barang->harga_jual }}</td>
+                      <td>{{ $barang->stok }}</td>
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <form action="#" method="POST" class="d-inline">
-                          
+                        <a href="{{ route('barang.edit', ['kode_barang' => $barang->kode_barang]) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route('barang.destroy', ['kode_barang' => $barang->kode_barang]) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
                           <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus Barang ini?')"><i class="fas fa-trash"></i>
                         </button>
                         </form>
                       </td>
                     </tr>
+                    @empty
+                    <tr>
+                      <td colspan="7" class="text-center">Tidak ada data Barang.</td>
+                    </tr>
+                    @endforelse
                 
                   </tbody>
                 </table>
