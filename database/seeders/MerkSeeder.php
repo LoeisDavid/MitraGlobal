@@ -14,8 +14,14 @@ class MerkSeeder extends Seeder
     public function run(): void
     {
         DB::table('merk')->insert([
-            ['nama' => 'Samsung'],
-            ['nama' => 'Logitech']
+            [
+                'kode_merk' => 'MRK001',
+                'nama' => 'Samsung'
+            ],
+            [
+                'kode_merk' => 'MRK002',
+                'nama' => 'Logitech'
+            ]
         ]);
     }
 }

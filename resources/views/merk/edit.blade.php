@@ -24,8 +24,8 @@
                 @method('PUT')
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="kode_Merk">Kode Merk</label>
-                    <input type="text" class="form-control" value="{{ $merk->kode_merk }}" name="kode_merk" id="kode_Merk" placeholder="Masukkan Kode Merk">
+                    <!-- <label for="kode_Merk">Kode Merk</label> -->
+                    <input type="text" class="form-control" value="{{ $merk->kode_merk }}" name="kode_merk" id="kode_Merk" placeholder="Masukkan Kode Merk" disabled>
                   </div>
                   <div class="form-group">
                     <label for="nama_Merk">Nama Merk</label>

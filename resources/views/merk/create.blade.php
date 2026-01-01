@@ -23,8 +23,8 @@
                 @csrf
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="kode_Merk">Kode Merk</label>
-                    <input type="text" class="form-control" name='kode_merk' id="kode_Merk" placeholder="Masukkan Kode Merk">
+                    <!-- <label for="kode_Merk">Kode Merk</label> -->
+                    <input type="text" class="form-control" name='kode_merk' id="kode_Merk" placeholder="Masukkan Kode Merk" hidden>
                   </div>
                   <div class="form-group">
                     <label for="nama_Merk">Nama Merk</label>

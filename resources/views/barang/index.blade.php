@@ -58,8 +58,8 @@
                     <tr>
                       <td>{{ $barang->kode_barang }}</td>
                       <td>{{ $barang->nama }}</td>
-                      <td>{{ $barang->kategori_kode_kategori }}</td>
-                      <td>{{ $barang->merk_kode_merk }}</td>
+                      <td>{{ $barang->kategori->nama }}</td>
+                      <td>{{ $barang->merk->nama }}</td>
                       <td>{{ $barang->harga_jual }}</td>
                       <td>{{ $barang->stok }}</td>
                       <td class="text-center">

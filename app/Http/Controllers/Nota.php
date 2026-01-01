@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNotaRequest;
+use App\Models\Nota_model;
+use App\Models\Pelanggan_model;
+use App\Models\Pegawai_model;
 use Illuminate\Http\Request;
 
 class Nota extends Controller
@@ -11,7 +15,8 @@ class Nota extends Controller
      */
     public function index()
     {
-        return view('nota.index');
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->get();
+        return view('nota.index', compact('nota'));
     }
 
     /**
@@ -19,23 +24,28 @@ class Nota extends Controller
      */
     public function create()
     {
-        return view('nota.create');
+        $pelanggan = Pelanggan_model::select('kode_pelanggan', 'nama')->get();
+        $pegawai = Pegawai_model::select('kode_pegawai', 'nama')->get();
+        return view('nota.create', compact('pelanggan', 'pegawai'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreNotaRequest $request)
     {
-        //
+        $validated = $request->validated();
+        Nota_model::create($validated);
+        return redirect()->route('nota.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(String $no_nota)
     {
-        return view('nota.show');
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        return view('nota.show', compact('nota'));
     }
 
     /**

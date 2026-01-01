@@ -15,6 +15,7 @@ class PegawaiSeeder extends Seeder
     {
         DB::table('pegawai')->insert([
             [
+                'kode_pegawai' => 'PGW001',
                 'nama' => 'Admin',
                 'username' => 'admin',
                 'password' => bcrypt('admin123')
