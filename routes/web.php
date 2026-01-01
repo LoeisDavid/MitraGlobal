@@ -7,7 +7,6 @@ use App\Http\Controllers\Barang;
 use App\Http\Controllers\Nota;
 use App\Http\Controllers\NotaBarang;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Barang;
 
 Route::get('/', function () {
     return view('welcome');

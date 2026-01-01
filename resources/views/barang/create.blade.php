@@ -36,7 +36,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="nama_barang">Nama Barang</label>
-                                <input type="text" class="form-control" id="nama_barang" name="nama_barang" placeholder="Masukkan Nama Barang">
+                                <input type="text" class="form-control" id="nama_barang" name="nama" placeholder="Masukkan Nama Barang">
                             </div>
                         </div>
                         <!-- end nama barang -->
@@ -46,9 +46,12 @@
                             <!-- select -->
                             <div class="form-group">
                                 <label>Kategori</label>
-                                <select class="form-control">
-                                <option>option 1</option>
-                                <option>option 2</option>
+                                <select class="form-control" name="kategori_kode_kategori">
+                                    @forelse ($kategoris as $kategori)
+                                        <option value="{{ $kategori->kode_kategori }}">{{ $kategori->nama }}</option>
+                                    @empty
+                                        <option>Data Kategori tidak tersedia</option>
+                                    @endforelse
                                 </select>
                             </div>
                         </div>
@@ -59,9 +62,12 @@
                             <!-- select -->
                             <div class="form-group">
                                 <label>Merek</label>
-                                <select class="form-control">
-                                <option>option 1</option>
-                                <option>option 2</option>
+                                <select class="form-control" name="merk_kode_merk">
+                                    @forelse ($merks as $merk)
+                                        <option value="{{ $merk->kode_merk }}">{{ $merk->nama }}</option>
+                                    @empty
+                                        <option>Data Merek tidak tersedia</option>
+                                    @endforelse
                                 </select>
                             </div>
                         </div>
