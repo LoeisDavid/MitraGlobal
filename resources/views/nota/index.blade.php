@@ -52,14 +52,14 @@
                     </tr>
                   </thead>
                   <tbody>
-                    
+                @forelse($nota as $row)
                     <tr>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
-                      <td>tes</td>
+                      <td>{{ $row->no_nota }}</td>
+                      <td>{{ \Carbon\Carbon::parse($row->tanggal)->translatedFormat('d F Y') }}</td>
+                      <td>{{ $row->pegawai->nama }}</td>
+                      <td>{{ $row->pelanggan->nama }}</td>
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
+                        <a href="{{ route("nota.show", $row->no_nota) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
                         <form action="#" method="POST" class="d-inline">
                           
                           <button class="btn btn-sm btn-success" onclick="return confirm('Apakah kamu yakin ingin menghapus Nota ini?')"><i class="fas fa-print"></i>
@@ -67,7 +67,11 @@
                         </form>
                       </td>
                     </tr>
-                
+                @empty
+                    <tr>
+                      <td colspan="5" class="text-center">Tidak ada data nota</td>
+                    </tr>
+                @endforelse
                   </tbody>
                 </table>
               </div>

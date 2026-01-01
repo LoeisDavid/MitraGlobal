@@ -32,18 +32,22 @@
                   </div>
                   <!-- select -->
                     <div class="form-group">
-                        <label>Nama Pegawai</label>
-                        <select class="form-control">
-                        <option>option 1</option>
-                        <option>option 2</option>
+                        <label for="nama_pegawai">Nama Pegawai</label>
+                        <select class="form-control" name="pegawai_kode_pegawai" id="nama_pegawai" required>
+                          <option value="">-- Pilih Pegawai --</option>
+                        @foreach($pegawai as $row)
+                            <option value="{{ $row->kode_pegawai }}">{{ $row->nama }}</option>
+                        @endforeach
                         </select>
                     </div>
                   <!-- select -->
                     <div class="form-group">
-                        <label>Nama Pelanggan</label>
-                        <select class="form-control">
-                        <option>option 1</option>
-                        <option>option 2</option>
+                        <label for="nama_pelanggan">Nama Pelanggan</label>
+                        <select class="form-control" name="pelanggan_kode_pelanggan" id="nama_pelanggan" required>
+                          <option value="">-- Pilih Pelanggan --</option>
+                        @foreach($pelanggan as $row)
+                            <option value="{{ $row->kode_pelanggan }}">{{ $row->nama }}</option>
+                        @endforeach
                         </select>
                     </div>
                 </div>
