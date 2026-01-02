@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('notajual', function (Blueprint $table) {
             $table->string('no_nota')->primary();
             $table->date('tanggal');
-
+            $table->boolean('draft')->default(true);
             $table->char('pelanggan_kode_pelanggan', 10);
             $table->char('pegawai_kode_pegawai', 10);
             $table->foreign('pelanggan_kode_pelanggan')

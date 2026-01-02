@@ -45,6 +45,12 @@
                 <!-- /.col -->
                 <div class="col-sm-4 invoice-col">
                   <b>No Nota #{{ $nota->no_nota }}</b><br>
+                  <b>Status: @if ($nota->draft)
+                    <span class="badge badge-secondary p-1">Draft</span>
+                  @else
+                    <span class="badge badge-success">Final</span>
+                  @endif
+                </b>
                 </div>
                 <!-- /.col -->
               </div>
@@ -61,21 +67,27 @@
                       <th class="text-right">Qty</th>
                       <th class="text-right">Diskon</th>
                       <th class="text-right">Subtotal</th>
+                      @if ($nota->draft)
                       <th class="text-center">Aksi</th>
+                      @endif
                     </tr>
                     </thead>
                     <tbody>
+                      @forelse ($detils as $detil)
                     <tr>
-                      <td>Call of Duty</td>
-                      <td class="text-right">Rp. 200.000</td>
-                      <td class="text-right">1</td>
-                      <td class="text-right">10</td>
-                      <td class="text-right">$64.50</td>
+                      <td>{{ $detil->barang->nama }}</td>
+                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
+                      <td class="text-right">{{ $detil->jumlah }}</td>
+                      <td class="text-right">{{ $detil->diskon }}%</td>
+                      <td class="text-right">Rp. {{ number_format($detil->jumlah * $detil->harga - ($detil->jumlah * $detil->harga * $detil->diskon / 100), 0, ',', '.') }}</td>
+                      @if ($nota->draft)
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-warning text-white">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="#" method="POST" class="d-inline">
+                        <a href="{{ route('nota_barang.edit', $detil->id) }}"
+   class="btn btn-sm btn-warning text-white">
+    <i class="fas fa-edit"></i>
+</a>
+
+                        <form action="{{ route('nota_barang.destroy', ['no_nota' => $nota->no_nota, 'id' => $detil->id]) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
@@ -83,7 +95,13 @@
                             </button>
                         </form>
                       </td>
+                      @endif
                     </tr>
+                    @empty
+                    <tr>
+                      <td colspan="{{ $nota->draft ? 6 : 5 }}" class="text-center">Tidak ada data barang.</td>
+                    </tr>
+                    @endforelse
                     </tbody>
                   </table>
                 </div>
@@ -92,31 +110,72 @@
               <!-- /.row -->
 
               <div class="row">
-                <!-- accepted payments column -->
+                <!-- Tambah Barang -->
+                
                 <div class="col-6">
-                    <a href="#" class="btn btn-primary btn-sm">
+                  @if ($nota->draft)
+                    <a href="{{ route('nota_barang.create', $nota->no_nota) }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah Barang
                     </a>
+                  @endif
                 </div>
+                
                 <!-- /.col -->
                 <div class="col-6">
                   <p class="lead">Tanggal 2/22/2014</p>
-
-                  <div class="table-responsive">
+                <!-- tabel ringkasan total -->
+                  <div class="table-responsive float-right">
                     <table class="table">
                       <tbody><tr>
                         <th style="width:50%">Subtotal:</th>
-                        <td>$250.30</td>
+                        <td>{{ number_format($subtotal, 0, ',', '.') }}</td>
                       </tr>
                       <tr>
                         <th>Diskon:</th>
-                        <td>$10.34</td>
+                        <td>{{ number_format($totalDiskon, 0, ',', '.') }}</td>
+                      </tr>
                       <tr>
                         <th>Total:</th>
-                        <td>$265.24</td>
+                        <td>{{ number_format($total, 0, ',', '.') }}</td>
                       </tr>
                     </tbody></table>
                   </div>
+                  <!-- end tabel ringkasan total -->
+
+                  <!-- tombol simpan draft -->
+                  @if ($nota->draft)
+                  <div class="col-12">
+                  <form action="{{ route('nota.finalize', $nota->no_nota) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <button type="button" class="btn btn-success float-right" data-toggle="modal" data-target="#finalizeModal">
+                    <i class="fas fa-check-circle mr-1"></i> 
+                    Finalisasi Nota
+                  </button>
+                  <!-- Modal -->
+                    <div class="modal fade" id="finalizeModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="finalizeModalLabel" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="finalizeModalLabel">Finalisasi Nota</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body">
+                            Apakah Anda yakin ingin memfinalisasi nota ini? Setelah difinalisasi, nota tidak dapat diubah kembali.
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-primary">Oke</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                  @endif
+                  <!-- end tombol simpan draft -->
                 </div>
                 <!-- /.col -->
               </div>

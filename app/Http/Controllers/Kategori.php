@@ -35,7 +35,7 @@ class Kategori extends Controller
             'nama' => 'required',
         ]);
 
-        $kode_kategori = $this->generateCode($request->nama);
+        $kode_kategori = $this->generateKodeKategori($request->nama);
 
         Kategori_model::create([
             'kode_kategori' => Str::upper($kode_kategori),
@@ -68,12 +68,13 @@ class Kategori extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'kode_kategori' => 'required|unique:kategori,kode_kategori' . $id . ',kode_kategori',
             'nama' => 'required',
         ]);
 
+        $kode_kategori = $this->generateKodeKategori($request->nama);
+
         Kategori_model::where('kode_kategori', $id)->update([
-            'kode_kategori' => Str::upper($request->kode_kategori),
+            'kode_kategori' => $kode_kategori,
             'nama' => $request->nama,
         ]);
 

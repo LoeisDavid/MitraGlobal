@@ -10,13 +10,8 @@ use App\Http\Controllers\NotaBarang;
 use App\Http\Controllers\Pegawai;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-Route::prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::get('/', [Dashboard::class, 'index'])->name('index');
-});
+Route::get('/', [Dashboard::class, 'index'])->name('dashboard.index');
 
 Route::prefix('kategori')->name('kategori.')->group(function () {
     Route::get('/', [Kategori::class, 'index'])->name('index');
@@ -58,7 +53,13 @@ Route::prefix('nota')->name('nota.')->group(function () {
     Route::get('/', [Nota::class, 'index'])->name('index');
     Route::get('/create', [Nota::class, 'create'])->name('create');
     Route::post('/store', [Nota::class, 'store'])->name('store');
+    Route::get('/{no_nota}/edit', [Nota::class, 'edit'])->name('edit');
+    Route::put('/{no_nota}/update', [Nota::class, 'update'])->name('update');
+    Route::delete('/{no_nota}/destroy', [Nota::class, 'destroy'])->name('destroy');
     Route::get('/{no_nota}/show', [Nota::class, 'show'])->name('show');
+    Route::put('/{no_nota}/finalize', [Nota::class, 'finalize'])->name('finalize');
+    Route::get('/{no_nota}/preview', [Nota::class, 'preview'])->name('preview');
+    Route::get('/{no_nota}/download', [Nota::class, 'download'])->name('download');
 });
 
 Route::prefix('nota_barang')->name('nota_barang.')->group(function () {

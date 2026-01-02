@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNotaRequest;
+use App\Http\Requests\UpdateNotaRequest;
 use App\Models\Nota_model;
 use App\Models\Pelanggan_model;
 use App\Models\Pegawai_model;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\NotaJualDetil_model;
 use Illuminate\Http\Request;
 
 class Nota extends Controller
@@ -35,6 +38,7 @@ class Nota extends Controller
     public function store(StoreNotaRequest $request)
     {
         $validated = $request->validated();
+        $validated['draft'] = true;
         Nota_model::create($validated);
         return redirect()->route('nota.index');
     }
@@ -45,30 +49,71 @@ class Nota extends Controller
     public function show(String $no_nota)
     {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        return view('nota.show', compact('nota'));
+        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
+        
+        $subtotal = 0;
+    $totalDiskon = 0;
+
+    foreach ($detils as $detil) {
+        $rowSubtotal = $detil->harga * $detil->jumlah;
+        $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+
+        $subtotal += $rowSubtotal;
+        $totalDiskon += $rowDiskon;
+    }
+
+    $total = $subtotal - $totalDiskon;
+
+        return view('nota.show', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $no_nota)
     {
-        //
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pelanggan = Pelanggan_model::select('kode_pelanggan', 'nama')->get();
+        $pegawai = Pegawai_model::select('kode_pegawai', 'nama')->get();
+        return view('nota.edit', compact('nota', 'pelanggan', 'pegawai'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateNotaRequest $request, string $no_nota)
     {
-        //
+        $validated = $request->validated();
+        Nota_model::where('no_nota', $no_nota)->update($validated);
+        return redirect()->route('nota.index');
+    }
+
+    public function finalize(string $no_nota)
+    {
+        Nota_model::where('no_nota', $no_nota)->update(['draft' => false]);
+        return redirect()->route('nota.index');
+    }
+
+    public function preview(string $no_nota)
+    {
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        return $pdf->stream('Nota#'.$no_nota.'.pdf');
+    }
+
+    public function download(string $no_nota)
+    {
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        return $pdf->download('Nota#'.$no_nota.'.pdf');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $no_nota)
     {
-        //
+        Nota_model::where('no_nota', $no_nota)->delete();
+        return redirect()->route('nota.index');
     }
 }

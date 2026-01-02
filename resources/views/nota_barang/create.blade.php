@@ -6,7 +6,7 @@
 @section('breadcrumb')
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{ route("nota.index") }}">Nota</a></li>
-        <li class="breadcrumb-item"><a href="{{ route("nota.show") }}">Detail Nota</a></li>
+        <li class="breadcrumb-item"><a href="{{ route("nota.show", $kode_nota) }}">Detail Nota</a></li>
         <li class="breadcrumb-item active">Tambah Nota Barang</li>
     </ol>
 @endsection
@@ -20,15 +20,18 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form action="{{ route('nota_barang.store') }}" method="POST">
+              <form action="{{ route('nota_barang.store', $kode_nota) }}" method="POST">
                 @csrf
                 <div class="card-body">
                     <!-- select -->
                     <div class="form-group">
                         <label>Barang</label>
-                        <select class="form-control">
-                        <option>option 1</option>
-                        <option>option 2</option>
+                        <select class="form-control" name="kode_barang">
+                            @forelse ($barang as $item)
+                                <option value="{{ $item->kode_barang }}">{{ $item->nama }} - Rp. {{ number_format($item->harga_jual, 0, ',', '.') }}</option>
+                            @empty
+                                <option disabled>Data Barang Tidak Tersedia</option>
+                            @endforelse
                         </select>
                     </div>
                     <div class="form-group">
@@ -37,12 +40,12 @@
                     </div>
                     <div class="form-group">
                         <label for="diskon">Diskon</label>
-                        <input type="number" class="form-control" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                        <input type="number" class="form-control" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang"><span class="text-muted">*Dalam Persen (%)</span>
                     </div>
                 <!-- /.card-body -->
                 </div>
                 <div class="card-footer d-flex justify-content-end">                
-                  <a href="{{ route("nota.show") }}" class="btn btn-secondary mr-2">Batal</a>
+                  <a href="{{ route("nota.show", $kode_nota) }}" class="btn btn-secondary mr-2">Batal</a>
                   <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
               </form>

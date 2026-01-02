@@ -32,7 +32,7 @@ class Merk extends Controller
             'nama' => 'required|string|max:100',
         ]);
 
-        $kode_merk = $this->generateCode($request->nama);
+        $kode_merk = $this->generateKodeMerk($request->nama);
 
         if ($kode_merk) {
             $merk = Merk_model::where('kode_merk', $kode_merk)->first();
@@ -76,7 +76,6 @@ class Merk extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'kode_merk' => 'required|string|max:10',
             'nama' => 'required|string|max:100',
         ]);
 
@@ -85,8 +84,10 @@ class Merk extends Controller
             return redirect()->back()->with('error', 'Merk tidak ditemukan.');
         }
 
+        $kode_merk = $this->generateKodeMerk($request->nama);
+
         $merk->update([
-            'kode_merk' => $request->kode_merk,
+            'kode_merk' => $kode_merk,
             'nama' => $request->nama,
         ]);
 
