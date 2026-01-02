@@ -35,7 +35,7 @@ class Kategori extends Controller
             'nama' => 'required',
         ]);
 
-        $kode_kategori = $this->generateCode($request->nama);
+        $kode_kategori = $this->generateKodeKategori($request->nama);
 
         Kategori_model::create([
             'kode_kategori' => Str::upper($kode_kategori),
