@@ -73,18 +73,21 @@
                     </tr>
                     </thead>
                     <tbody>
+                      @forelse ($detils as $detil)
                     <tr>
-                      <td>Call of Duty</td>
-                      <td class="text-right">Rp. 200.000</td>
-                      <td class="text-right">1</td>
-                      <td class="text-right">10</td>
-                      <td class="text-right">$64.50</td>
+                      <td>{{ $detil->barang->nama }}</td>
+                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
+                      <td class="text-right">{{ $detil->jumlah }}</td>
+                      <td class="text-right">{{ $detil->diskon }}%</td>
+                      <td class="text-right">Rp. {{ number_format($detil->jumlah * $detil->harga - ($detil->jumlah * $detil->harga * $detil->diskon / 100), 0, ',', '.') }}</td>
                       @if ($nota->draft)
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-warning text-white">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <form action="#" method="POST" class="d-inline">
+                        <a href="{{ route('nota_barang.edit', $detil->id) }}"
+   class="btn btn-sm btn-warning text-white">
+    <i class="fas fa-edit"></i>
+</a>
+
+                        <form action="{{ route('nota_barang.destroy', ['no_nota' => $nota->no_nota, 'id' => $detil->id]) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
@@ -94,6 +97,11 @@
                       </td>
                       @endif
                     </tr>
+                    @empty
+                    <tr>
+                      <td colspan="{{ $nota->draft ? 6 : 5 }}" class="text-center">Tidak ada data barang.</td>
+                    </tr>
+                    @endforelse
                     </tbody>
                   </table>
                 </div>
@@ -106,7 +114,7 @@
                 
                 <div class="col-6">
                   @if ($nota->draft)
-                    <a href="#" class="btn btn-primary btn-sm">
+                    <a href="{{ route('nota_barang.create', $nota->no_nota) }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-plus"></i> Tambah Barang
                     </a>
                   @endif
@@ -120,14 +128,15 @@
                     <table class="table">
                       <tbody><tr>
                         <th style="width:50%">Subtotal:</th>
-                        <td>$250.30</td>
+                        <td>{{ number_format($subtotal, 0, ',', '.') }}</td>
                       </tr>
                       <tr>
                         <th>Diskon:</th>
-                        <td>$10.34</td>
+                        <td>{{ number_format($totalDiskon, 0, ',', '.') }}</td>
+                      </tr>
                       <tr>
                         <th>Total:</th>
-                        <td>$265.24</td>
+                        <td>{{ number_format($total, 0, ',', '.') }}</td>
                       </tr>
                     </tbody></table>
                   </div>
