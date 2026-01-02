@@ -32,7 +32,7 @@ class Merk extends Controller
             'nama' => 'required|string|max:100',
         ]);
 
-        $kode_merk = $this->generateCode($request->nama);
+        $kode_merk = $this->generateKodeMerk($request->nama);
 
         if ($kode_merk) {
             $merk = Merk_model::where('kode_merk', $kode_merk)->first();

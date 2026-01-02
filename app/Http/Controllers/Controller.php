@@ -4,98 +4,148 @@ namespace App\Http\Controllers;
 
 abstract class Controller
 {
-   function generateCode(string $nama): string
+   function generateKodeMerk(string $nama): string
 {
-    $vokal = ['A','I','U','E','O'];
+    $nama = trim($nama);
 
-    $nama = strtoupper(trim($nama));
-    $nama = str_replace('-', ' ', $nama);
-    $kata = array_values(array_filter(explode(' ', $nama)));
-
-    $jumlahKata = count($kata);
-    $hasil = '';
-
-    // helper cek angka
-    $hasNumber = fn($w) => preg_match('/\d/', $w);
-
-    // ======================
-    // 1 KATA
-    // ======================
-    if ($jumlahKata === 1) {
-        $w = $kata[0];
-
-        // jika ada angka → ambil utuh
-        if ($hasNumber($w)) {
-            return $w;
-        }
-
-        $len = strlen($w);
-
-        if ($len <= 4) {
-            return $w;
-        }
-
-        $awal = $w[0];
-        $end  = $len - 1;
-
-        // awal vokal
-        if (in_array($awal, $vokal)) {
-            $hasil = substr($w, 0, 3);
-
-            while ($end >= 0 && !in_array($w[$end], $vokal)) {
-                $end--;
-            }
-
-            if ($end >= 0 && strlen($hasil) < 4) {
-                $hasil .= $w[$end];
-            }
-
-            return $hasil;
-        }
-
-        // awal non-vokal
-        $depan = substr($w, 0, 2);
-
-        if (!in_array($w[$end], $vokal)) {
-            $end--;
-        }
-
-        $belakang = substr($w, max(0, $end - 1), 2);
-
-        return $depan . $belakang;
+    // Jika ada angka → ambil semua
+    if (preg_match('/\d/', $nama)) {
+        return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $nama));
     }
 
-    // ======================
-    // 2 KATA
-    // ======================
-    if ($jumlahKata === 2) {
-        foreach ($kata as $w) {
-            if ($hasNumber($w)) {
-                $hasil .= $w;
-            } else {
-                $hasil .= substr($w, 0, 2);
-            }
-        }
-        return $hasil;
-    }
+    // Hapus selain huruf
+    $nama = preg_replace('/[^A-Za-z]/', '', $nama);
 
-    // ======================
-    // 3 KATA ATAU LEBIH
-    // ======================
-    foreach ($kata as $i => $w) {
-        if ($i > 2) break;
-
-        if ($hasNumber($w)) {
-            $hasil .= $w;
-        } else {
-            $hasil .= ($i === 0)
-                ? substr($w, 0, 2)
-                : substr($w, 0, 1);
-        }
-    }
-
-    return $hasil;
+    return strtoupper(substr($nama, 0, 4));
 }
+
+function generateKodeKategori(string $nama): string
+{
+    // Bersihkan spasi berlebih
+    $nama = trim(preg_replace('/\s+/', ' ', $nama));
+    $kata = explode(' ', $nama);
+
+    // Hitung total huruf (tanpa spasi)
+    $totalHuruf = strlen(str_replace(' ', '', $nama));
+
+    // Jika total huruf <= 5, ambil semua
+    if ($totalHuruf <= 5) {
+        return strtoupper(str_replace(' ', '', $nama));
+    }
+
+    // Jika hanya 1 kata
+    if (count($kata) === 1) {
+        return strtoupper(substr($kata[0], 0, 5));
+    }
+
+    $maxSlot = 5;
+    $hasilPerKata = [];
+    $slotTerpakai = 0;
+
+    // Step 1: ambil huruf pertama tiap kata (disimpan per kata)
+    foreach ($kata as $k) {
+        if ($slotTerpakai < $maxSlot) {
+            $hasilPerKata[] = strtoupper($k[0]);
+            $slotTerpakai++;
+        } else {
+            $hasilPerKata[] = '';
+        }
+    }
+
+    $slotSisa = $maxSlot - $slotTerpakai;
+
+    // Step 2: isi slot sisa (huruf kedua lalu terakhir, per kata)
+    for ($i = 0; $i < count($kata) && $slotSisa > 0; $i++) {
+        $panjang = strlen($kata[$i]);
+
+        // huruf kedua
+        if ($panjang >= 2 && $slotSisa > 0) {
+            $hasilPerKata[$i] .= strtoupper($kata[$i][1]);
+            $slotSisa--;
+        }
+
+        // huruf terakhir
+        if ($panjang >= 1 && $slotSisa > 0) {
+            $hasilPerKata[$i] .= strtoupper($kata[$i][$panjang - 1]);
+            $slotSisa--;
+        }
+    }
+
+    // Gabungkan sesuai urutan kata
+    return implode('', $hasilPerKata);
+}
+
+
+    function generateKodeBarang(string $nama): string
+{
+    
+    // Rapikan spasi
+    $nama = trim(preg_replace('/\s+/', ' ', $nama));
+    $kataSemua = explode(' ', $nama);
+
+    $kataNonTipe = [];
+    $kataTipe = [];
+
+    // Pisahkan kata tipe dan non-tipe
+    foreach ($kataSemua as $k) {
+        if (preg_match('/\d/', $k)) {
+            $kataTipe[] = strtoupper($k);
+        } else {
+            $kataNonTipe[] = strtoupper($k);
+        }
+    }
+
+    $jumlahNonTipe = count($kataNonTipe);
+    $kode = '';
+
+    // ===== ATURAN B =====
+    if ($jumlahNonTipe >= 5) {
+        foreach ($kataNonTipe as $k) {
+            $kode .= $k[0];
+        }
+    }
+    // ===== ATURAN A =====
+    else {
+        $maxSlot = 5;
+        $hasilPerKata = [];
+        $slotTerpakai = 0;
+
+        // Ambil huruf pertama tiap kata (disimpan)
+        foreach ($kataNonTipe as $k) {
+            if ($slotTerpakai < $maxSlot) {
+                $hasilPerKata[] = $k[0];
+                $slotTerpakai++;
+            } else {
+                $hasilPerKata[] = '';
+            }
+        }
+
+        $slotSisa = $maxSlot - $slotTerpakai;
+
+        // Isi slot sisa: huruf kedua lalu terakhir
+        for ($i = 0; $i < count($kataNonTipe) && $slotSisa > 0; $i++) {
+            $panjang = strlen($kataNonTipe[$i]);
+
+            if ($panjang >= 2 && $slotSisa > 0) {
+                $hasilPerKata[$i] .= $kataNonTipe[$i][1];
+                $slotSisa--;
+            }
+
+            if ($panjang >= 1 && $slotSisa > 0) {
+                $hasilPerKata[$i] .= $kataNonTipe[$i][$panjang - 1];
+                $slotSisa--;
+            }
+        }
+
+        $kode = implode('', $hasilPerKata);
+    }
+
+    // Gabungkan kata tipe (angka)
+    return $kode . implode('', $kataTipe);
+}
+
+
+
 
 
 
