@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateNotaRequest;
 use App\Models\Nota_model;
 use App\Models\Pelanggan_model;
 use App\Models\Pegawai_model;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class Nota extends Controller
@@ -74,6 +75,20 @@ class Nota extends Controller
     {
         Nota_model::where('no_nota', $no_nota)->update(['draft' => false]);
         return redirect()->route('nota.index');
+    }
+
+    public function preview(string $no_nota)
+    {
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        return $pdf->stream('Nota#'.$no_nota.'.pdf');
+    }
+
+    public function download(string $no_nota)
+    {
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        return $pdf->download('Nota#'.$no_nota.'.pdf');
     }
 
     /**

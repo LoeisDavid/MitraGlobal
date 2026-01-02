@@ -67,7 +67,7 @@
                         @endif
                       </td>
                       <td class="text-center">
-                        @if ($row->draft == true)
+                        @if ($row->draft)
                             <a href="{{ route("nota.edit", $row->no_nota) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
                             <form action="{{ route("nota.destroy", $row->no_nota) }}" method="POST" class="d-inline">
                               @csrf
@@ -78,11 +78,8 @@
                             <a href="{{ route("nota.show", $row->no_nota) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
                         @else
                         <a href="{{ route("nota.show", $row->no_nota) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
-                        <form action="#" method="POST" class="d-inline">
-                          
-                          <button class="btn btn-sm btn-success" onclick="return confirm('Apakah kamu yakin ingin menghapus Nota ini?')"><i class="fas fa-print"></i>
-                        </button>
-                        </form>
+                        <a href="{{ route("nota.preview", $row->no_nota) }}" class="btn btn-sm btn-success text-white" target="_blank"><i class="fas fa-print"></i></a>
+                        <a href="{{ route("nota.download", $row->no_nota) }}" class="btn btn-sm btn-secondary text-white"><i class="fas fa-download"></i></a>
                         @endif
                         
                       </td>
