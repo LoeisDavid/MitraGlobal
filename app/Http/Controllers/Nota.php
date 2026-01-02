@@ -8,6 +8,7 @@ use App\Models\Nota_model;
 use App\Models\Pelanggan_model;
 use App\Models\Pegawai_model;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\NotaJualDetil_model;
 use Illuminate\Http\Request;
 
 class Nota extends Controller
@@ -37,6 +38,7 @@ class Nota extends Controller
     public function store(StoreNotaRequest $request)
     {
         $validated = $request->validated();
+        $validated['draft'] = true;
         Nota_model::create($validated);
         return redirect()->route('nota.index');
     }
@@ -47,7 +49,22 @@ class Nota extends Controller
     public function show(String $no_nota)
     {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        return view('nota.show', compact('nota'));
+        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
+        
+        $subtotal = 0;
+    $totalDiskon = 0;
+
+    foreach ($detils as $detil) {
+        $rowSubtotal = $detil->harga * $detil->jumlah;
+        $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+
+        $subtotal += $rowSubtotal;
+        $totalDiskon += $rowDiskon;
+    }
+
+    $total = $subtotal - $totalDiskon;
+
+        return view('nota.show', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
     }
 
     /**
