@@ -16,7 +16,12 @@ class Nota_model extends Model
         'no_nota',
         'tanggal',
         'pelanggan_kode_pelanggan',
-        'pegawai_kode_pegawai'
+        'pegawai_kode_pegawai',
+        'draft',
+    ];
+
+    protected $casts = [
+        'draft' => 'boolean',
     ];
 
     public function pelanggan()

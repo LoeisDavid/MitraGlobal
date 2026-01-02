@@ -58,7 +58,11 @@ Route::prefix('nota')->name('nota.')->group(function () {
     Route::get('/', [Nota::class, 'index'])->name('index');
     Route::get('/create', [Nota::class, 'create'])->name('create');
     Route::post('/store', [Nota::class, 'store'])->name('store');
+    Route::get('/{no_nota}/edit', [Nota::class, 'edit'])->name('edit');
+    Route::put('/{no_nota}/update', [Nota::class, 'update'])->name('update');
+    Route::delete('/{no_nota}/destroy', [Nota::class, 'destroy'])->name('destroy');
     Route::get('/{no_nota}/show', [Nota::class, 'show'])->name('show');
+    Route::put('/{no_nota}/finalize', [Nota::class, 'finalize'])->name('finalize');
 });
 
 Route::prefix('nota_barang')->name('nota_barang.')->group(function () {

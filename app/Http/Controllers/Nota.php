@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreNotaRequest;
+use App\Http\Requests\UpdateNotaRequest;
 use App\Models\Nota_model;
 use App\Models\Pelanggan_model;
 use App\Models\Pegawai_model;
@@ -51,24 +52,36 @@ class Nota extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $no_nota)
     {
-        //
+        $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
+        $pelanggan = Pelanggan_model::select('kode_pelanggan', 'nama')->get();
+        $pegawai = Pegawai_model::select('kode_pegawai', 'nama')->get();
+        return view('nota.edit', compact('nota', 'pelanggan', 'pegawai'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateNotaRequest $request, string $no_nota)
     {
-        //
+        $validated = $request->validated();
+        Nota_model::where('no_nota', $no_nota)->update($validated);
+        return redirect()->route('nota.index');
+    }
+
+    public function finalize(string $no_nota)
+    {
+        Nota_model::where('no_nota', $no_nota)->update(['draft' => false]);
+        return redirect()->route('nota.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $no_nota)
     {
-        //
+        Nota_model::where('no_nota', $no_nota)->delete();
+        return redirect()->route('nota.index');
     }
 }
