@@ -21,10 +21,10 @@ class AuthController extends Controller
         'password' => 'required|string',
     ]);
 
-    if (Auth::attempt($credentials)) {
+    if (Auth::attempt($credentials, $request->filled('remember'))) {
         $request->session()->regenerate();
 
-            return redirect()->intended('/dashboard');
+        return redirect()->route('dashboard.index')->with('success', 'Berhasil Login'); 
     }
 
     dd('login gagal');

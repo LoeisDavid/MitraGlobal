@@ -75,9 +75,6 @@ Route::prefix('nota_barang')->name('nota_barang.')->group(function () {
     Route::delete('/{id}/destroy', [NotaBarang::class, 'destroy'])->name('destroy');
 });
 
-
-});
-
 Route::prefix('pegawai')->name('pegawai.')->group(function () {
     Route::get('/', [Pegawai::class, 'index'])->name('index');
     Route::get('/create', [Pegawai::class, 'create'])->name('create');
@@ -86,3 +83,7 @@ Route::prefix('pegawai')->name('pegawai.')->group(function () {
     Route::put('/{kode_pegawai}/update', [Pegawai::class, 'update'])->name('update');
     Route::delete('/{kode_pegawai}/destroy', [Pegawai::class, 'destroy'])->name('destroy');
 });
+
+});
+
+
