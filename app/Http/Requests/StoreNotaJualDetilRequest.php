@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateNotaRequest extends FormRequest
+class StoreNotaJualDetilRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,11 +21,10 @@ class UpdateNotaRequest extends FormRequest
      */
     public function rules(): array
     {
-        $nota = $this->route('no_nota');
         return [
-            'tanggal' => 'required|date',
-            'pelanggan_kode_pelanggan' => 'required|string|exists:pelanggan,kode_pelanggan',
-            'pegawai_kode_pegawai' => 'required|string|exists:pegawai,kode_pegawai',
+            'kode_barang' => 'required|string',
+            'qty' => 'required|integer|min:1',
+            'diskon' => 'required|numeric|min:0|max:100',
         ];
     }
 }

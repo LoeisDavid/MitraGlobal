@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNotaJualDetilRequest;
+use App\Http\Requests\UpdateNotaJualDetilRequest;
 use App\Models\NotajualDetil_model;
 use Illuminate\Http\Request;
 use App\Models\NotaJual_model;
@@ -22,33 +24,38 @@ class NotaBarang extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'kode_barang' => 'required|string',
-            'qty' => 'required|integer|min:1',
-            'diskon' => 'required|numeric|min:0|max:100',
-        ]);
+    public function store(StoreNotaJualDetilRequest $request)
+{
+    $validated = $request->validated();
 
-        $barang = Barang_model::where('kode_barang', $request->kode_barang)->first();
+    // Ambil barang
+    $barang = Barang_model::where('kode_barang', $validated['kode_barang'])->firstOrFail();
 
-        if (!$barang || $barang->stok < $request->qty) {
-            return redirect()->back()->with('error', 'Stok barang tidak mencukupi.');
-        }
+    // Validasi stok
+    if ($barang->stok < $validated['qty']) {
+        return redirect()
+            ->back()
+            ->withInput()
+            ->with('error', 'Stok barang tidak mencukupi.');
+    }
 
-        Barang_model::where('kode_barang', $request->kode_barang)->decrement('stok', $request->qty);
+    // Kurangi stok barang
+    $barang->decrement('stok', $validated['qty']);
 
-        NotajualDetil_model::create([
-            'notajual_no_nota' => $request->route('id'),
-            'barang_kode_barang' => $request->kode_barang,
-            'harga' => $barang->harga_jual,
-            'jumlah' => $request->qty,
-            'diskon' => $request->diskon,
-        ]);
+    // Simpan detail nota
+    NotajualDetil_model::create([
+        'notajual_no_nota'   => $request->route('id'),
+        'barang_kode_barang' => $validated['kode_barang'],
+        'harga'              => $barang->harga_jual,
+        'jumlah'             => $validated['qty'],
+        'diskon'             => $validated['diskon'],
+    ]);
 
-        return redirect()->route('nota.show', $request->route('id'));
-    
+    return redirect()
+        ->route('nota.show', $request->route('id'))
+        ->with('success', 'Barang berhasil ditambahkan ke nota.');
 }
+
 
     /**
      * Display the specified resource.
@@ -76,36 +83,46 @@ class NotaBarang extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateNotaJualDetilRequest $request, string $id)
 {
-    $request->validate([
-        'kode_barang' => 'required|string|exists:barang,kode_barang',
-        'qty'         => 'required|integer|min:1',
-        'diskon'      => 'required|numeric|min:0|max:100',
-    ]);
+    $validated = $request->validated();
 
     $detil = NotajualDetil_model::with('barang')->findOrFail($id);
-    $barangBaru = Barang_model::where('kode_barang', $request->kode_barang)->firstOrFail();
+    $barangBaru = Barang_model::where('kode_barang', $validated['kode_barang'])->firstOrFail();
 
-    DB::transaction(function () use ($request, $detil, $barangBaru) {
+    DB::transaction(function () use ($detil, $barangBaru, $validated) {
 
-        // 1. Kembalikan stok lama
-        $detil->barang->increment('stok', $detil->jumlah);
+        $barangLama = $detil->barang;
+        $qtyLama    = $detil->jumlah;
+        $qtyBaru    = $validated['qty'];
 
-        // 2. Cek stok barang baru
-        if ($barangBaru->stok < $request->qty) {
+        /**
+         * 1️⃣ Kembalikan stok barang lama
+         */
+        $barangLama->increment('stok', $qtyLama);
+
+        /**
+         * 2️⃣ Hitung stok tersedia setelah dikembalikan
+         */
+        $stokTersedia = $barangBaru->fresh()->stok;
+
+        if ($qtyBaru > $stokTersedia) {
             abort(400, 'Stok barang tidak mencukupi.');
         }
 
-        // 3. Kurangi stok barang baru
-        $barangBaru->decrement('stok', $request->qty);
+        /**
+         * 3️⃣ Kurangi stok barang baru
+         */
+        $barangBaru->decrement('stok', $qtyBaru);
 
-        // 4. Update detil
+        /**
+         * 4️⃣ Update detail nota
+         */
         $detil->update([
             'barang_kode_barang' => $barangBaru->kode_barang,
             'harga'              => $barangBaru->harga_jual,
-            'jumlah'             => $request->qty,
-            'diskon'             => $request->diskon,
+            'jumlah'             => $qtyBaru,
+            'diskon'             => $validated['diskon'],
         ]);
     });
 

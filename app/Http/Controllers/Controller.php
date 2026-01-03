@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Nota_model;
+use Illuminate\Support\Facades\DB;
+
 abstract class Controller
 {
    function generateKodeMerk(string $nama): string
@@ -142,6 +145,31 @@ function generateKodeKategori(string $nama): string
 
     // Gabungkan kata tipe (angka)
     return $kode . implode('', $kataTipe);
+}
+
+
+    function generateNoNota(string $tanggal): string
+    {
+        $dateKey = date('Ymd', strtotime($tanggal));
+        $prefix  = "MGA-$dateKey-";
+
+        return DB::transaction(function () use ($prefix) {
+
+            $lastNota = Nota_model::where('no_nota', 'like', $prefix . '%')
+                ->orderBy('no_nota', 'desc')
+                ->lockForUpdate()
+                ->value('no_nota');
+
+            if ($lastNota) {
+                $lastNumber = (int) substr($lastNota, -2);
+                $nextNumber = str_pad($lastNumber + 1, 2, '0', STR_PAD_LEFT);
+            } else {
+                $nextNumber = '01';
+            }
+
+            return $prefix . $nextNumber;
+        });
+    
 }
 
 
