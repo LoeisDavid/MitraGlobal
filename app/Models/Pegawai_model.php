@@ -19,6 +19,11 @@ class Pegawai_model extends Authenticatable
         'password'
     ];
 
+    public function getAuthIdentifierName()
+{
+    return 'username';
+}
+
     protected $hidden = [
         'password',
     ];
