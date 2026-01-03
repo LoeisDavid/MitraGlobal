@@ -12,7 +12,7 @@
         }
         .header-table {
             width: 100%;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #333;
             padding-bottom: 20px;
         }
         .header-table td {
@@ -39,16 +39,22 @@
             margin-top: 20px;
         }
         .items-table th {
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            padding: 10px 5px;
-            /* Default th adalah center, kita ubah ke left untuk Nama Barang */
-            text-align: left; 
-        }
+    border-top: 2px solid #333;
+    border-bottom: 2px solid #333;
+    padding: 10px 5px;
+    text-align: left;
+}
+
         .items-table td {
-            padding: 15px 5px;
-            background-color: #f9f9f9;
-        }
+    padding: 15px 5px;
+    background-color: #ffffff;
+}
+
+.items-table td {
+    border-bottom: 1.5px solid #cfcfcfff;
+}
+
+
 
         /* Penyelarasan Teks */
         .text-right { text-align: right !important; }
@@ -64,7 +70,7 @@
         }
         .summary-table td {
             padding: 8px 5px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #333;
         }
     </style>
 </head>
@@ -73,10 +79,14 @@
     <table class="header-table">
         <tr>
             <td width="35%">
-                <div class="title">Mitra Global</div>
-                <div>Pegawai</div>
-                <div class="font-bold">{{ $nota->pegawai->nama }}</div>
-            </td>
+    <div class="title">Mitra Global</div>
+    <div>Komplek sidotopo dipo 2/2B, Suarabaya, Jawa Timur</div>
+    <div>Telp: 0812-3456-7890</div>
+
+    <div style="margin-top:10px;">Pegawai</div>
+    <div class="font-bold">{{ $nota->pegawai->nama }}</div>
+</td>
+
             <td width="35%">
                 <div style="margin-top: 30px;">Pelanggan</div>
                 <div class="font-bold">{{ $nota->pelanggan->nama }}</div>
@@ -96,8 +106,8 @@
         <thead>
             <tr>
                 <th width="40%">Nama Barang</th>
-                <th width="20%" class="text-right">Harga</th>
                 <th width="10%" class="text-right">Qty</th>
+                <th width="20%" class="text-right">Harga satuan</th>
                 <th width="15%" class="text-right">Diskon</th>
                 <th width="15%" class="text-right">Subtotal</th>
             </tr>
@@ -106,8 +116,8 @@
             @forelse($detils as $row)
             <tr>
                 <td>{{ $row->barang->nama }}</td>
-                <td class="text-right">Rp. {{ number_format($row->harga, 0, ',', '.') }}</td>
                 <td class="text-right">{{ $row->jumlah }}</td>
+                <td class="text-right">Rp. {{ number_format($row->harga, 0, ',', '.') }}</td>
                 <td class="text-right">{{ $row->diskon }}%</td>
                 <td class="text-right">Rp. {{ number_format($row->harga * $row->jumlah - ($row->harga * $row->jumlah * $row->diskon / 100), 0, ',', '.') }}</td>
             </tr>

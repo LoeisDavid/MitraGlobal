@@ -63,8 +63,8 @@
                     <thead>
                     <tr>
                       <th>Nama Barang</th>
-                      <th class="text-right">Harga</th>
                       <th class="text-right">Qty</th>
+                      <th class="text-right">Harga</th>
                       <th class="text-right">Diskon</th>
                       <th class="text-right">Subtotal</th>
                       @if ($nota->draft)
@@ -76,8 +76,8 @@
                       @forelse ($detils as $detil)
                     <tr>
                       <td>{{ $detil->barang->nama }}</td>
-                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
                       <td class="text-right">{{ $detil->jumlah }}</td>
+                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
                       <td class="text-right">{{ $detil->diskon }}%</td>
                       <td class="text-right">Rp. {{ number_format($detil->jumlah * $detil->harga - ($detil->jumlah * $detil->harga * $detil->diskon / 100), 0, ',', '.') }}</td>
                       @if ($nota->draft)
@@ -122,7 +122,7 @@
                 
                 <!-- /.col -->
                 <div class="col-6">
-                  <p class="lead">Tanggal 2/22/2014</p>
+                  <p class="lead">Tanggal {{ $nota->tanggal }}</p>
                 <!-- tabel ringkasan total -->
                   <div class="table-responsive float-right">
                     <table class="table">

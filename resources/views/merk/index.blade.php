@@ -63,6 +63,7 @@
                           <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                             <i class="fas fa-trash"></i>
                           </button>
+                          </form>
                       </td>
                     </tr>
                     @empty
