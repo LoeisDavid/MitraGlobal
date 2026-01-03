@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
 @section('title', 'Ubah Nota Barang')
+@push('select2css')
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endpush
 @section('page-title', 'Form Nota Barang')
 
 @section('breadcrumb')
@@ -26,13 +31,20 @@
                 <div class="card-body">
                     <!-- select -->
                     <div class="form-group">
-                        <label>Barang</label>
-                        <select class="form-control">
-                        @forelse ($barang as $item)
-                                <option value="{{ $item->kode_barang }}" {{ $item->kode_barang == $detil->barang_kode_barang ? 'selected' : '' }}>{{ $item->nama }} - Rp. {{ number_format($item->harga_jual, 0, ',', '.') }}</option>
-                            @empty
-                                <option disabled>Data Barang Tidak Tersedia</option>
-                            @endforelse
+                        <label for="selectBarang">Barang</label>
+                        <select name="kode_barang"
+                                id="selectBarang"
+                                class="form-control selectBarang"
+                                required>
+
+                            <option value="">-- Pilih Barang --</option>
+
+                            @foreach ($barang as $row)
+                                <option value="{{ $row->kode_barang }}" {{ $detil->barang->kode_barang == $row->kode_barang ? 'selected' : '' }}>
+                                    {{ $row->nama }} - Rp. {{ number_format($row->harga_jual, 0, ',', '.') }}
+                                </option>
+                            @endforeach
+
                         </select>
                     </div>
                     <div class="form-group">
@@ -54,3 +66,16 @@
         </div>
     </div>
 @endsection
+
+@push('select2js')
+    <!-- Select2 JS -->
+    <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('.selectBarang').select2({
+                theme: 'bootstrap4',
+                placeholder: '-- Pilih Barang --',
+            });
+        });
+    </script>
+@endpush
