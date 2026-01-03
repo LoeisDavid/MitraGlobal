@@ -51,21 +51,26 @@
                     </tr>
                   </thead>
                   <tbody>
-                  
+                  @forelse($data as $pegawai)
                     <tr>
-                      <td>ayo</td>
-                      <td>ayo</td>
-                      <td>cihuy</td>
+                      <td>{{ $pegawai->kode_pegawai }}</td>
+                      <td>{{ $pegawai->nama }}</td>
+                      <td>{{ $pegawai->username }}</td>
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <form action="#" method="POST" class="d-inline">
-                          
+                        <a href="{{ route("pegawai.edit", $pegawai->kode_pegawai) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route("pegawai.destroy", $pegawai->kode_pegawai) }}" method="POST" class="d-inline">
+                          @csrf
+                          @method('DELETE')
                           <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus Pegawai ini?')"><i class="fas fa-trash"></i>
                         </button>
                         </form>
                       </td>
                     </tr>
-
+                  @empty
+                    <tr>
+                      <td colspan="4" class="text-center">Tidak ada data Pegawai.</td>
+                    </tr>
+                  @endforelse
                   </tbody>
                 </table>
               </div>

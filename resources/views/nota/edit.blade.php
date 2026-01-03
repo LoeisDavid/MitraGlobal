@@ -25,7 +25,7 @@
                 <div class="card-body">
                   <div class="form-group">
                     <label for="no_nota">No Nota</label>
-                    <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Masukkan No Nota" value="{{ $nota->no_nota }}">
+                    <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Masukkan No Nota" value="{{ $nota->no_nota }}" disabled>
                   </div>
                   <div class="form-group">
                     <label for="tanggal">Tanggal</label>

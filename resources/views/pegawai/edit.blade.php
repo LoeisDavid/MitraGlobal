@@ -19,25 +19,27 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form action="{{ route('pegawai.update') }}" method="POST">
+              <form action="{{ route('pegawai.update', $pegawai->kode_pegawai) }}" method="POST">
                 @csrf
+                @method('PUT')
                 <div class="card-body">
                   <div class="form-group">
                     <label for="kode_pegawai">Kode Pegawai</label>
-                    <input type="text" class="form-control" id="kode_pegawai" name="kode_pegawai" placeholder="Masukkan Kode Pegawai">
+                    <input type="text" class="form-control" id="kode_pegawai" name="kode_pegawai" placeholder="Masukkan Kode Pegawai" value="{{ $pegawai->kode_pegawai }}">
                   </div>
                   <div class="form-group">
                     <label for="nama_pegawai">Nama Pegawai</label>
-                    <input type="text" class="form-control" id="nama_pegawai" name="nama_pegawai" placeholder="Masukkan Nama Pegawai" required>
+                    <input type="text" class="form-control" id="nama_pegawai" name="nama" placeholder="Masukkan Nama Pegawai" required value="{{ $pegawai->nama }}">
                   </div>
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username" required>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username" required value="{{ $pegawai->username }}">
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
-                    </div>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password">
+                        <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password.</small>
+                      </div>
                 </div>
                 <!-- /.card-body -->
 
