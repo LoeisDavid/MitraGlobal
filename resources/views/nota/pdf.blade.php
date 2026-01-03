@@ -103,13 +103,19 @@
             </tr>
         </thead>
         <tbody>
+            @forelse($detils as $row)
             <tr>
-                <td>Call of Duty</td>
-                <td class="text-right">Rp. 200.000</td>
-                <td class="text-right">1</td>
-                <td class="text-right">10</td>
-                <td class="text-right">$64.50</td>
+                <td>{{ $row->barang->nama }}</td>
+                <td class="text-right">Rp. {{ number_format($row->harga, 0, ',', '.') }}</td>
+                <td class="text-right">{{ $row->jumlah }}</td>
+                <td class="text-right">{{ $row->diskon }}%</td>
+                <td class="text-right">Rp. {{ number_format($row->harga * $row->jumlah - ($row->harga * $row->jumlah * $row->diskon / 100), 0, ',', '.') }}</td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="5" class="text-center">Tidak ada data barang.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 
@@ -120,15 +126,15 @@
             </tr>
             <tr>
                 <td class="font-bold">Subtotal:</td>
-                <td class="text-right">$250.30</td>
+                <td class="text-right">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td class="font-bold">Diskon:</td>
-                <td class="text-right">$10.34</td>
+                <td class="text-right">Rp. {{ number_format($totalDiskon, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td class="font-bold">Total:</td>
-                <td class="text-right">$265.24</td>
+                <td class="text-right">Rp. {{ number_format($total, 0, ',', '.') }}</td>
             </tr>
         </table>
     </div>
