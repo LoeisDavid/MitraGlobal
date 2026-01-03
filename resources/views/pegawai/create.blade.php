@@ -28,7 +28,7 @@
                   </div>
                   <div class="form-group">
                     <label for="nama_pegawai">Nama Pegawai</label>
-                    <input type="text" class="form-control" id="nama_pegawai" name="nama_pegawai" placeholder="Masukkan Nama Pegawai" required>
+                    <input type="text" class="form-control" id="nama_pegawai" name="nama" placeholder="Masukkan Nama Pegawai" required>
                   </div>
                     <div class="form-group">
                         <label for="username">Username</label>

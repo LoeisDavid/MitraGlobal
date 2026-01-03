@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pegawai_model;
 use Illuminate\Http\Request;
 
 class Pegawai extends Controller
@@ -11,7 +12,8 @@ class Pegawai extends Controller
      */
     public function index()
     {
-        return view('pegawai.index');
+        $data = Pegawai_model::all();
+        return view('pegawai.index', compact('data'));
     }
 
     /**
@@ -27,7 +29,18 @@ class Pegawai extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $request->validate([
+            'kode_pegawai' => 'required',
+            'nama' => 'required',
+            'username' => 'required',
+            'password' => 'required',  
+        ]);
+
+        $request['password'] = bcrypt($request['password']);
+        Pegawai_model::create($request->all());
+
+        return redirect()->route('pegawai.index');
     }
 
     /**
@@ -43,7 +56,8 @@ class Pegawai extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $pegawai = Pegawai_model::findOrFail($id);
+        return view('pegawai.edit', compact('pegawai'));
     }
 
     /**
@@ -51,7 +65,21 @@ class Pegawai extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'nama' => 'required|string|max:100',
+            'username' => 'required|string|max:50|unique:pegawai,username,' . $id . ',kode_pegawai',
+            'password' => 'nullable|string|min:6',
+        ]);
+
+        if (empty($data['password'])) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($data['password']);
+        }
+
+        Pegawai_model::where('kode_pegawai', $id)->update($data);
+
+        return redirect()->route('pegawai.index');
     }
 
     /**
@@ -59,6 +87,7 @@ class Pegawai extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Pegawai_model::where('kode_pegawai', $id)->delete();
+        return redirect()->route('pegawai.index');
     }
 }

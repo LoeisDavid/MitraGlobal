@@ -90,6 +90,7 @@ public function store(StoreNotaRequest $request)
     public function update(UpdateNotaRequest $request, string $no_nota)
     {
         $validated = $request->validated();
+        $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
         Nota_model::where('no_nota', $no_nota)->update($validated);
         return redirect()->route('nota.index');
     }
