@@ -10,6 +10,10 @@ use App\Models\Pegawai_model;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\NotaJualDetil_model;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 class Nota extends Controller
 {
@@ -38,40 +42,84 @@ class Nota extends Controller
 
 public function store(StoreNotaRequest $request)
 {
-    $validated = $request->validated();
-    $validated['draft'] = true;
+    try {
+        $validated = $request->validated();
+        $validated['draft'] = true;
 
-    $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
+        $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
 
-    Nota_model::create($validated);
+        Nota_model::create($validated);
 
-    return redirect()->route('nota.index');
+        return redirect()
+            ->route('nota.index')
+            ->with('success', 'Nota berhasil dibuat');
+
+    } catch (QueryException $e) {
+        Log::error('DB Error saat simpan nota', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Gagal menyimpan nota (masalah database)'
+        );
+
+    } catch (\Throwable $e) {
+        Log::error('Error umum saat simpan nota', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Terjadi kesalahan tak terduga saat menyimpan nota'
+        );
+    }
 }
+
 
 
     /**
      * Display the specified resource.
      */
-    public function show(String $no_nota)
-    {
+    public function show(string $no_nota)
+{
+    try {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
-        
+        $detils = NotaJualDetil_model::with(['barang'])
+            ->where('notaJual_no_nota', $no_nota)
+            ->get();
+
         $subtotal = 0;
         $totalDiskon = 0;
 
-    foreach ($detils as $detil) {
-        $rowSubtotal = $detil->harga * $detil->jumlah;
-        $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+        foreach ($detils as $detil) {
+            if (!$detil->barang) {
+                throw new \Exception('Barang pada nota tidak lengkap');
+            }
 
-        $subtotal += $rowSubtotal;
-        $totalDiskon += $rowDiskon;
+            $rowSubtotal = $detil->harga * $detil->jumlah;
+            $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+
+            $subtotal += $rowSubtotal;
+            $totalDiskon += $rowDiskon;
+        }
+
+        $total = $subtotal - $totalDiskon;
+
+        return view('nota.show', compact(
+            'nota', 'detils', 'subtotal', 'totalDiskon', 'total'
+        ));
+
+    } catch (NotFoundHttpException $e) {
+        return redirect()
+            ->route('nota.index')
+            ->with('error', 'Nota tidak ditemukan');
+
+    } catch (\Throwable $e) {
+        Log::error('Error saat tampilkan nota', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->route('nota.index')
+            ->with('error', 'Gagal menampilkan detail nota');
     }
+}
 
-    $total = $subtotal - $totalDiskon;
-
-        return view('nota.show', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -102,23 +150,38 @@ public function store(StoreNotaRequest $request)
     }
 
     public function preview(string $no_nota)
-    {
+{
+    try {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
+        $detils = NotaJualDetil_model::with(['barang'])
+            ->where('notaJual_no_nota', $no_nota)
+            ->get();
+
         $subtotal = 0;
         $totalDiskon = 0;
 
         foreach ($detils as $detil) {
-            $rowSubtotal = $detil->harga * $detil->jumlah;
-            $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
-
-            $subtotal += $rowSubtotal;
-            $totalDiskon += $rowDiskon;
+            $subtotal += $detil->harga * $detil->jumlah;
+            $totalDiskon += ($detil->harga * $detil->jumlah) * ($detil->diskon / 100);
         }
+
         $total = $subtotal - $totalDiskon;
-        $pdf = Pdf::loadView('nota.pdf', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
+
+        $pdf = Pdf::loadView('nota.pdf', compact(
+            'nota', 'detils', 'subtotal', 'totalDiskon', 'total'
+        ));
+
         return $pdf->stream('Nota#'.$no_nota.'.pdf');
+
+    } catch (\Throwable $e) {
+        Log::error('PDF Error', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->route('nota.index')
+            ->with('error', 'Gagal membuat preview PDF');
     }
+}
+
 
     public function download(string $no_nota)
     {
@@ -144,8 +207,21 @@ public function store(StoreNotaRequest $request)
      * Remove the specified resource from storage.
      */
     public function destroy(string $no_nota)
-    {
+{
+    try {
         Nota_model::where('no_nota', $no_nota)->delete();
-        return redirect()->route('nota.index');
+
+        return redirect()
+            ->route('nota.index')
+            ->with('success', 'Nota berhasil dihapus');
+
+    } catch (QueryException $e) {
+        Log::error('Delete gagal', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->route('nota.index')
+            ->with('error', 'Nota gagal dihapus (masih digunakan)');
     }
+}
+
 }

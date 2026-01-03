@@ -37,10 +37,16 @@ class Kategori extends Controller
 
         $kode_kategori = $this->generateKodeKategori($request->nama);
 
-        Kategori_model::create([
-            'kode_kategori' => Str::upper($kode_kategori),
-            'nama' => $request->nama,
-        ]);
+        try {
+            Kategori_model::create([
+                'kode_kategori' => Str::upper($kode_kategori),
+                'nama' => $request->nama,
+            ]);
+
+            return redirect()->route('kategori.index')->with('success', 'Data kategori berhasil disimpan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data kategori: ' . $e->getMessage()]);
+        }
 
         return redirect()->route('kategori.index');
     }
@@ -73,17 +79,33 @@ class Kategori extends Controller
 
         $kode_kategori = $this->generateKodeKategori($request->nama);
 
-        Kategori_model::where('kode_kategori', $id)->update([
-            'kode_kategori' => $kode_kategori,
-            'nama' => $request->nama,
-        ]);
+        try {
+            Kategori_model::where('kode_kategori', $id)->update([
+                'kode_kategori' => Str::upper($kode_kategori),
+                'nama' => $request->nama,
+            ]);
 
-        return redirect()->route('kategori.index');
+            return redirect()->route('kategori.index')->with('success', 'Data kategori berhasil diperbarui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data kategori: ' . $e->getMessage()]);
+        }
     }
 
     public function destroy(string $id)
     {
-        Kategori_model::where('kode_kategori', $id)->delete();
+        try {
+            Kategori_model::where('kode_kategori', $id)->firstOrFail();
+
+            $relatedBarang = \App\Models\Barang_model::where('kategori_kode_kategori', $id)->first();
+            if ($relatedBarang) {
+                return redirect()->back()->with('error', 'Kategori tidak dapat dihapus karena masih terkait dengan data barang.');
+            }
+
+            Kategori_model::where('kode_kategori', $id)->delete();
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat mengambil data kategori: ' . $e->getMessage()]);
+        }
+        
         return redirect()->route('kategori.index');
     }
 }

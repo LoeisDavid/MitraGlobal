@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Pegawai_model;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
+
+
 
 class Pegawai extends Controller
 {
@@ -28,20 +32,41 @@ class Pegawai extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        
-        $request->validate([
-            'kode_pegawai' => 'required',
-            'nama' => 'required',
-            'username' => 'required',
-            'password' => 'required',  
-        ]);
+{
+    $validated = $request->validate([
+        'kode_pegawai' => 'required',
+        'nama'         => 'required',
+        'username'     => 'required',
+        'password'     => 'required',
+    ]);
 
-        $request['password'] = bcrypt($request['password']);
-        Pegawai_model::create($request->all());
+    try {
+        $validated['password'] = bcrypt($validated['password']);
 
-        return redirect()->route('pegawai.index');
+        Pegawai_model::create($validated);
+
+        return redirect()
+            ->route('pegawai.index')
+            ->with('success', 'Pegawai berhasil ditambahkan');
+
+    } catch (QueryException $e) {
+        Log::error('DB Error tambah pegawai', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Gagal menyimpan data pegawai (data duplikat atau database error)'
+        );
+
+    } catch (\Throwable $e) {
+        Log::error('Error tambah pegawai', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Terjadi kesalahan saat menyimpan data pegawai'
+        );
     }
+}
+
 
     /**
      * Display the specified resource.
@@ -64,30 +89,79 @@ class Pegawai extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $data = $request->validate([
-            'nama' => 'required|string|max:100',
-            'username' => 'required|string|max:50|unique:pegawai,username,' . $id . ',kode_pegawai',
-            'password' => 'nullable|string|min:6',
-        ]);
+{
+    $data = $request->validate([
+        'nama'     => 'required|string|max:100',
+        'username' => 'required|string|max:50|unique:pegawai,username,' . $id . ',kode_pegawai',
+        'password' => 'nullable|string|min:6',
+    ]);
 
-        if (empty($data['password'])) {
-            unset($data['password']);
-        } else {
+    try {
+        if (!empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
+        } else {
+            unset($data['password']);
         }
 
-        Pegawai_model::where('kode_pegawai', $id)->update($data);
+        $updated = Pegawai_model::where('kode_pegawai', $id)->update($data);
 
-        return redirect()->route('pegawai.index');
+        if ($updated === 0) {
+            throw new \Exception('Pegawai tidak ditemukan');
+        }
+
+        return redirect()
+            ->route('pegawai.index')
+            ->with('success', 'Data pegawai berhasil diperbarui');
+
+    } catch (QueryException $e) {
+        Log::error('DB Error update pegawai', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Gagal memperbarui data pegawai (database error)'
+        );
+
+    } catch (\Throwable $e) {
+        Log::error('Error update pegawai', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            $e->getMessage() ?: 'Terjadi kesalahan saat update pegawai'
+        );
     }
+}
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        Pegawai_model::where('kode_pegawai', $id)->delete();
-        return redirect()->route('pegawai.index');
+{
+    try {
+        $deleted = Pegawai_model::where('kode_pegawai', $id)->delete();
+
+        if ($deleted === 0) {
+            throw new \Exception('Pegawai tidak ditemukan');
+        }
+
+        return redirect()
+            ->route('pegawai.index')
+            ->with('success', 'Pegawai berhasil dihapus');
+
+    } catch (QueryException $e) {
+        Log::error('DB Error hapus pegawai', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->route('pegawai.index')
+            ->with('error', 'Pegawai tidak bisa dihapus (masih digunakan)');
+
+    } catch (\Throwable $e) {
+        Log::error('Error hapus pegawai', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->route('pegawai.index')
+            ->with('error', 'Gagal menghapus pegawai');
     }
+}
+
 }
