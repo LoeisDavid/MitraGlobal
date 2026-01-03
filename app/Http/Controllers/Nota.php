@@ -51,7 +51,7 @@ public function store(StoreNotaRequest $request)
         Nota_model::create($validated);
 
         return redirect()
-            ->route('nota.index')
+            ->route('nota.show', $validated['no_nota'])
             ->with('success', 'Nota berhasil dibuat');
 
     } catch (QueryException $e) {
