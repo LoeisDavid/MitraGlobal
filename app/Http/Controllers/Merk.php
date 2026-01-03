@@ -34,6 +34,7 @@ class Merk extends Controller
 
         $kode_merk = $this->generateKodeMerk($request->nama);
 
+        
         if ($kode_merk) {
             $merk = Merk_model::where('kode_merk', $kode_merk)->first();
             if ($merk) {
@@ -41,10 +42,16 @@ class Merk extends Controller
             }
         }
 
+        try {
+
         Merk_model::create([
             'kode_merk' => $kode_merk,
             'nama' => $request->nama,
         ]);
+
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data merk: ' . $e->getMessage()]);
+            }
 
         return redirect()->route('merk.index')->with('success', 'Merk berhasil ditambahkan.');
     }
@@ -86,10 +93,21 @@ class Merk extends Controller
 
         $kode_merk = $this->generateKodeMerk($request->nama);
 
-        $merk->update([
+        try {
+            $existingMerk = Merk_model::where('kode_merk', $kode_merk)
+                ->where('kode_merk', '!=', $id)
+                ->first();
+            if ($existingMerk) {
+                return redirect()->back()->with('error', 'Kode/Nama Merk sudah digunakan.');
+            }
+            $merk->update([
             'kode_merk' => $kode_merk,
             'nama' => $request->nama,
         ]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memeriksa kode merk: ' . $e->getMessage()]);
+        }
 
         return redirect()->route('merk.index')->with('success', 'Merk berhasil diperbarui.');
     }
@@ -101,11 +119,22 @@ class Merk extends Controller
 {
     $merk = Merk_model::where('kode_merk', $id)->first();
 
+
     if (!$merk) {
         return redirect()->back()->with('error', 'Merk tidak ditemukan.');
     }
 
-    $merk->delete();
+    try {
+        $relatedBarang = \App\Models\Barang_model::where('merk_kode_merk', $id)->first();
+        if ($relatedBarang) {
+            return redirect()->back()->with('error', 'Merk tidak dapat dihapus karena masih terkait dengan data barang.');
+        } 
+        $merk->delete();
+
+    } catch (\Exception $e) {
+        return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memeriksa data terkait: ' . $e->getMessage()]);
+    }
+   
 
     return redirect()->route('merk.index')->with('success', 'Merk berhasil dihapus.');
 }
