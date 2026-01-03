@@ -58,7 +58,7 @@ public function store(StoreNotaRequest $request)
         $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
         
         $subtotal = 0;
-    $totalDiskon = 0;
+        $totalDiskon = 0;
 
     foreach ($detils as $detil) {
         $rowSubtotal = $detil->harga * $detil->jumlah;
@@ -103,14 +103,39 @@ public function store(StoreNotaRequest $request)
     public function preview(string $no_nota)
     {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
+        $subtotal = 0;
+        $totalDiskon = 0;
+
+        foreach ($detils as $detil) {
+            $rowSubtotal = $detil->harga * $detil->jumlah;
+            $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+
+            $subtotal += $rowSubtotal;
+            $totalDiskon += $rowDiskon;
+        }
+        $total = $subtotal - $totalDiskon;
+        $pdf = Pdf::loadView('nota.pdf', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
         return $pdf->stream('Nota#'.$no_nota.'.pdf');
     }
 
     public function download(string $no_nota)
     {
         $nota = Nota_model::with(['pelanggan', 'pegawai'])->findOrFail($no_nota);
-        $pdf = Pdf::loadView('nota.pdf', compact('nota'));
+        $detils = NotaJualDetil_model::with(['barang'])->where('notaJual_no_nota', $no_nota)->get();
+
+        $subtotal = 0;
+        $totalDiskon = 0;
+
+        foreach ($detils as $detil) {
+            $rowSubtotal = $detil->harga * $detil->jumlah;
+            $rowDiskon   = $rowSubtotal * ($detil->diskon / 100);
+
+            $subtotal += $rowSubtotal;
+            $totalDiskon += $rowDiskon;
+        }
+        $total = $subtotal - $totalDiskon;
+        $pdf = Pdf::loadView('nota.pdf', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'));
         return $pdf->download('Nota#'.$no_nota.'.pdf');
     }
 

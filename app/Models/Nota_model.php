@@ -33,4 +33,9 @@ class Nota_model extends Model
     {
         return $this->belongsTo(Pegawai_model::class, 'pegawai_kode_pegawai', 'kode_pegawai');
     }
+
+    public function detil()
+    {
+        return $this->hasMany(NotaJualDetil_model::class, 'notajual_no_nota', 'no_nota');
+    }
 }

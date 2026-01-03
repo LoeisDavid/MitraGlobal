@@ -83,9 +83,9 @@
                       @if ($nota->draft)
                       <td class="text-center">
                         <a href="{{ route('nota_barang.edit', $detil->id) }}"
-   class="btn btn-sm btn-warning text-white">
-    <i class="fas fa-edit"></i>
-</a>
+                          class="btn btn-sm btn-warning text-white">
+                            <i class="fas fa-edit"></i>
+                        </a>
 
                         <form action="{{ route('nota_barang.destroy', ['no_nota' => $nota->no_nota, 'id' => $detil->id]) }}" method="POST" class="d-inline">
                             @csrf
