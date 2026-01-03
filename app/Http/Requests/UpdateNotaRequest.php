@@ -23,7 +23,6 @@ class UpdateNotaRequest extends FormRequest
     {
         $nota = $this->route('no_nota');
         return [
-            'no_nota' => 'required|string|max:25|unique:notajual,no_nota,' . $nota . ',no_nota',
             'tanggal' => 'required|date',
             'pelanggan_kode_pelanggan' => 'required|string|exists:pelanggan,kode_pelanggan',
             'pegawai_kode_pegawai' => 'required|string|exists:pegawai,kode_pegawai',
