@@ -35,13 +35,19 @@ class Nota extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreNotaRequest $request)
-    {
-        $validated = $request->validated();
-        $validated['draft'] = true;
-        Nota_model::create($validated);
-        return redirect()->route('nota.index');
-    }
+
+public function store(StoreNotaRequest $request)
+{
+    $validated = $request->validated();
+    $validated['draft'] = true;
+
+    $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
+
+    Nota_model::create($validated);
+
+    return redirect()->route('nota.index');
+}
+
 
     /**
      * Display the specified resource.
