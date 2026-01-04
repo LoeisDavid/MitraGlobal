@@ -101,6 +101,7 @@ class NotaBarang extends Controller
             ->with('success', 'Barang berhasil ditambahkan ke nota');
 
     } catch (QueryException $e) {
+        DB::rollBack();
         Log::error('DB Error tambah barang nota', ['error' => $e->getMessage()]);
 
         return back()->withInput()->with(
@@ -109,6 +110,7 @@ class NotaBarang extends Controller
         );
 
     } catch (\Throwable $e) {
+        DB::rollBack();
         Log::error('Error tambah barang nota', ['error' => $e->getMessage()]);
 
         return back()->withInput()->with(

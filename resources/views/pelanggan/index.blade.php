@@ -81,7 +81,7 @@
                 <!-- card footer -->
                 <div class="card-footer clearfix mt-2">
     <div class="float-right">
-        {{ $barangs->links('pagination::bootstrap-4') }}
+        {{ $pelanggan->links('pagination::bootstrap-4') }}
     </div>
 </div>
 

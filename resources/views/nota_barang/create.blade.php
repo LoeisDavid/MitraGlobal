@@ -85,6 +85,7 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                             </div>
+                            <span class="text-muted">Diskon dalam persen (%)</span>
                         </div>
                     </div>
                     

@@ -14,6 +14,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class Nota extends Controller
@@ -187,13 +188,65 @@ public function store(StoreNotaRequest $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateNotaRequest $request, string $no_nota)
-    {
+
+
+public function update(UpdateNotaRequest $request, string $no_nota)
+{
+    DB::beginTransaction();
+
+    try {
         $validated = $request->validated();
-        $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
-        Nota_model::where('no_nota', $no_nota)->update($validated);
-        return redirect()->route('nota.index')->with('success', 'Data nota berhasil diperbarui.');
+
+        $oldNoNota = $no_nota;
+        $newNoNota = $this->generateNoNota($validated['tanggal']);
+
+        // ambil detil kalau ada
+        $detils = NotaJualDetil_model::where('notajual_no_nota', $oldNoNota)->get();
+
+        // kalau ada detil, hapus dulu
+        if ($detils->isNotEmpty()) {
+            NotaJualDetil_model::where('notajual_no_nota', $oldNoNota)->delete();
+        }
+
+        // update parent (sekarang FK sudah aman)
+        $validated['no_nota'] = $newNoNota;
+        Nota_model::where('no_nota', $oldNoNota)->update($validated);
+
+        // kalau sebelumnya ada detil, masukin lagi
+        if ($detils->isNotEmpty()) {
+            $newDetils = $detils->map(function ($item) use ($newNoNota) {
+                return [
+                    'notajual_no_nota' => $newNoNota,
+                    'barang_kode_barang' => $item->barang_kode_barang,
+                    'jumlah' => $item->jumlah,
+                    'harga' => $item->harga,
+                    'diskon' => $item->diskon,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            })->toArray();
+
+            NotaJualDetil_model::insert($newDetils);
+        }
+
+        DB::commit();
+
+        return redirect()
+            ->route('nota.index')
+            ->with('success', 'Data nota berhasil diperbarui.');
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+
+        return back()->withErrors([
+            'error' => 'Gagal update nota: ' . $e->getMessage()
+        ]);
     }
+}
+
+
+
+
 
     public function finalize(string $no_nota)
     {

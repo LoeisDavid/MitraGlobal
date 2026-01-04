@@ -23,10 +23,6 @@
                 @csrf
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="kode_pelanggan">Kode Pelanggan<span class="text-danger">*</span></label>
-                    <input type="text" class="form-control @error('kode_pelanggan') is-invalid @enderror" id="kode_pelanggan" name="kode_pelanggan" placeholder="Masukkan Kode Pelanggan" required
-                    value="{{ old("kode_pelanggan") }}"
-                    >
                     @error('kode_pelanggan')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

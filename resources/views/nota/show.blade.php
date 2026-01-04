@@ -64,7 +64,7 @@
                     <tr>
                       <th>Nama Barang</th>
                       <th class="text-right">Qty</th>
-                      <th class="text-right">Harga</th>
+                      <th class="text-right">Harga Satuan</th>
                       <th class="text-right">Diskon</th>
                       <th class="text-right">Subtotal</th>
                       @if ($nota->draft)
