@@ -29,7 +29,7 @@
                     id="kode_pelanggan"
                     name="kode_pelanggan"
                     placeholder="Masukkan Kode Pelanggan"
-                    value="{{ old("kode_pelanggan", $pelanggan->kode_pelanggan) }}">
+                    value="{{ old("kode_pelanggan", $pelanggan->kode_pelanggan) }}" disabled>
                     @error('kode_pelanggan')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

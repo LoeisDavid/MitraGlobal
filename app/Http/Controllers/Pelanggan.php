@@ -76,6 +76,7 @@ public function index(Request $request)
 {
     $validated = $request->validated();
     try {
+        $validated['kode_pelanggan'] = $this->generateKodePelanggan();
         Pelanggan_model::create($validated);
 
         return redirect()
