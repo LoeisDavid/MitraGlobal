@@ -19,6 +19,7 @@
 
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('custom.css') }}">
 
     <!-- Select2 -->
      @stack('select2css')

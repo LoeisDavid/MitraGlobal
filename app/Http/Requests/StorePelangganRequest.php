@@ -29,7 +29,6 @@ class StorePelangganRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kode_pelanggan' => 'required|unique:pelanggan,kode_pelanggan',
             'nama' => 'required',
             'alamat' => 'required',
             'telepon' => 'required',
