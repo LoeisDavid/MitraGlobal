@@ -17,6 +17,10 @@
     {{-- Google Font: Source Sans Pro --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 
+    <!-- Toastr -->
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('custom.css') }}">
+
     <!-- Select2 -->
      @stack('select2css')
 </head>
@@ -63,6 +67,37 @@
 <script src="{{ asset('adminlte/plugins/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('adminlte/dist/js/adminlte.min.js') }}"></script>
+<!-- Toastr -->
+<script src="{{ asset('adminlte/plugins/toastr/toastr.min.js') }}"></script>
+
+<script>
+    $(document).ready(function() {
+        // Konfigurasi Opsional
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000",
+        };
+
+        // Pesan Sukses
+        @if(session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        // Pesan Error Manual
+        @if(session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
+
+        // Pesan Error Validasi (dari Form Request)
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                toastr.error("{{ $error }}");
+            @endforeach
+        @endif
+    });
+</script>
 
 <!-- Select2 -->
  @stack('select2js')

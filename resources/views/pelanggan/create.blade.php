@@ -23,20 +23,36 @@
                 @csrf
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="kode_pelanggan">Kode Pelanggan</label>
-                    <input type="text" class="form-control" id="kode_pelanggan" name="kode_pelanggan" placeholder="Masukkan Kode Pelanggan">
+                    @error('kode_pelanggan')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="form-group">
-                    <label for="nama_pelanggan">Nama Pelanggan</label>
-                    <input type="text" class="form-control" id="nama_pelanggan" name="nama_pelanggan" placeholder="Masukkan Nama Pelanggan" required>
+                    <label for="nama_pelanggan">Nama Pelanggan<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_pelanggan" name="nama" placeholder="Masukkan Nama Pelanggan" required
+                    value="{{ old("nama") }}"
+                    >
+                    @error('nama_pelanggan')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="form-group">
-                    <label for="alamat">Alamat</label>
-                    <input type="text" class="form-control" id="alamat" name="alamat" placeholder="Masukkan Alamat Pelanggan" required>
+                    <label for="alamat">Alamat<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('alamat') is-invalid @enderror" id="alamat" name="alamat" placeholder="Masukkan Alamat Pelanggan" required
+                    value="{{ old("alamat") }}"
+                    >
+                    @error('alamat')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="form-group">
-                    <label for="telepon">Telepon</label>
-                    <input type="text" class="form-control" id="telepon" name="telepon" placeholder="Masukkan Telepon Pelanggan" required>
+                    <label for="telepon">Telepon<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('telepon') is-invalid @enderror" id="telepon" name="telepon" placeholder="Masukkan Telepon Pelanggan" required
+                    value="{{ old("telepon") }}"
+                    >
+                    @error('telepon')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                 </div>
                 <!-- /.card-body -->

@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Pegawai_model extends Model
+class Pegawai_model extends Authenticatable
 {
     protected $table = 'pegawai';
 
@@ -19,7 +19,16 @@ class Pegawai_model extends Model
         'password'
     ];
 
-     public function nota()
+    public function getAuthIdentifierName()
+{
+    return 'username';
+}
+
+    protected $hidden = [
+        'password',
+    ];
+
+    public function nota()
     {
         return $this->hasMany(
             Nota_model::class,

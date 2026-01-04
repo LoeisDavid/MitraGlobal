@@ -28,33 +28,67 @@
               <form action="{{ route('nota_barang.store', $kode_nota) }}" method="POST">
                 @csrf
                 <div class="card-body">
-                    <!-- select -->
-                    <div class="form-group">
-                        <label for="selectBarang">Barang</label>
-                        <select name="kode_barang"
-                                id="selectBarang"
-                                class="form-control selectBarang"
-                                required>
-
-                            <option value="">-- Pilih Barang --</option>
-
-                            @foreach ($barang as $row)
-                                <option value="{{ $row->kode_barang }}">
-                                    {{ $row->nama }} - Rp. {{ number_format($row->harga_jual, 0, ',', '.') }}
-                                </option>
-                            @endforeach
-
-                        </select>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <!-- select -->
+                            <div class="form-group">
+                                <label for="selectBarang">Barang<span class="text-danger">*</span></label>
+                                <select name="kode_barang"
+                                        id="selectBarang"
+                                        class="form-control @error('kode_barang') is-invalid
+                                        @enderror"
+                                        value="{{ old('kode_barang') }}"
+                                        required>
+                                </select>
+                                @error('kode_barang')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Merk</label>
+                                <select id="filterMerk" class="form-control select2merk">
+                                    <option value="">-- Semua Merk --</option>
+                                    @foreach ($merk as $m)
+                                        <option value="{{ $m->kode_merk }}">{{ $m->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Kategori</label>
+                                <select id="filterKategori" class="form-control select2kategori">
+                                    <option value="">-- Semua Kategori --</option>
+                                    @foreach ($kategori as $k)
+                                        <option value="{{ $k->kode_kategori }}">{{ $k->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="qty">Qty<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('qty') is-invalid @enderror" value="{{ old('qty') }}" id="qty" name="qty" placeholder="Masukkan Jumlah Barang" required>
+                            </div>
+                        @error('qty')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="diskon">Diskon</label>
+                                <input type="number" class="form-control @error('diskon') is-invalid
+                                @enderror" value="{{ old('diskon') ?? 0 }}" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                            @error('diskon')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            </div>
+                            <span class="text-muted">Diskon dalam persen (%)</span>
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="qty">Qty</label>
-                        <input type="number" class="form-control" id="qty" name="qty" placeholder="Masukkan Jumlah Barang">
-                    </div>
-                    <div class="form-group">
-                        <label for="diskon">Diskon</label>
-                        <input type="number" class="form-control" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang"><span class="text-muted">*Dalam Persen (%)</span>
-                    </div>
+                    
                 <!-- /.card-body -->
                 </div>
                 <div class="card-footer d-flex justify-content-end">                
@@ -70,13 +104,105 @@
 @push('select2js')
     <!-- Select2 JS -->
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
-    <script>
-        $(document).ready(function() {
-            $('.selectBarang').select2({
-                theme: 'bootstrap4',
-                placeholder: '-- Pilih Barang --',
-                allowClear: true
-            });
-        });
-    </script>
+<script>
+$(document).ready(function () {
+
+    // =========================
+    // SELECT2 MERK
+    // =========================
+    $('#filterMerk').select2({
+        theme: 'bootstrap4',
+        placeholder: '-- Cari merk --',
+        allowClear: true
+    });
+
+    // =========================
+    // SELECT2 KATEGORI
+    // =========================
+    $('#filterKategori').select2({
+        theme: 'bootstrap4',
+        placeholder: '-- Cari kategori --',
+        allowClear: true
+    });
+
+    // =========================
+    // SELECT2 BARANG (AJAX)
+    // =========================
+    $('#selectBarang').select2({
+        theme: 'bootstrap4',
+        placeholder: '-- Cari barang --',
+        allowClear: true,
+        ajax: {
+            url: "{{ route('nota_barang.ajaxBarang') }}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term || '',
+                    page: params.page || 1,
+                    kode_merk: $('#filterMerk').val(),
+                    kode_kategori: $('#filterKategori').val()
+                };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+
+                return {
+                    results: data.results,
+                    pagination: {
+                        more: data.pagination.more
+                    }
+                };
+            },
+            cache: true
+        }
+    });
+
+    // =========================
+    // RESET BARANG JIKA FILTER BERUBAH
+    // =========================
+    $('#filterMerk, #filterKategori').on('change', function () {
+        $('#selectBarang').val(null).trigger('change');
+    });
+
+    // =========================
+    // RESTORE OLD BARANG (INI POIN UTAMA)
+    // =========================
+    const oldBarang = "{{ old('kode_barang') }}";
+
+    if (!oldBarang) {
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('nota_barang.ajaxBarang') }}",
+        dataType: 'json',
+        data: {
+            search: oldBarang
+        },
+        success: function (response) {
+
+            if (!response.results || response.results.length === 0) {
+                return;
+            }
+
+            const barang = response.results[0];
+
+            const option = new Option(
+                barang.text,
+                barang.id,
+                true,
+                true
+            );
+
+            $('#selectBarang')
+                .append(option)
+                .trigger('change');
+        }
+    });
+
+});
+</script>
+
+
 @endpush

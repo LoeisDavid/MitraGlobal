@@ -25,9 +25,9 @@
                     </a>
                     
                     <!-- Form Pencarian -->
-                    <form class="d-flex">
+                    <form class="d-flex" method="get" action="{{ route('pelanggan.index') }}">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control" placeholder="Search">
+                            <input type="text" name="keyword" class="form-control" placeholder="Search" value="{{ $keyword ?? '' }}">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -80,14 +80,11 @@
 
                 <!-- card footer -->
                 <div class="card-footer clearfix mt-2">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                    <li class="page-item"><a class="page-link" href="#">«</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">»</a></li>
-                    </ul>
-                </div>
+    <div class="float-right">
+        {{ $pelanggan->links('pagination::bootstrap-4') }}
+    </div>
+</div>
+
                 <!-- end card footer -->
             </div>
             <!-- end tabel Pelanggan -->

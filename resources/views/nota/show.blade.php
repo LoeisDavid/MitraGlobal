@@ -63,8 +63,8 @@
                     <thead>
                     <tr>
                       <th>Nama Barang</th>
-                      <th class="text-right">Harga</th>
                       <th class="text-right">Qty</th>
+                      <th class="text-right">Harga Satuan</th>
                       <th class="text-right">Diskon</th>
                       <th class="text-right">Subtotal</th>
                       @if ($nota->draft)
@@ -76,16 +76,16 @@
                       @forelse ($detils as $detil)
                     <tr>
                       <td>{{ $detil->barang->nama }}</td>
-                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
                       <td class="text-right">{{ $detil->jumlah }}</td>
+                      <td class="text-right">Rp. {{ number_format($detil->harga, 0, ',', '.') }}</td>
                       <td class="text-right">{{ $detil->diskon }}%</td>
                       <td class="text-right">Rp. {{ number_format($detil->jumlah * $detil->harga - ($detil->jumlah * $detil->harga * $detil->diskon / 100), 0, ',', '.') }}</td>
                       @if ($nota->draft)
                       <td class="text-center">
                         <a href="{{ route('nota_barang.edit', $detil->id) }}"
-   class="btn btn-sm btn-warning text-white">
-    <i class="fas fa-edit"></i>
-</a>
+                          class="btn btn-sm btn-warning text-white">
+                            <i class="fas fa-edit"></i>
+                        </a>
 
                         <form action="{{ route('nota_barang.destroy', ['no_nota' => $nota->no_nota, 'id' => $detil->id]) }}" method="POST" class="d-inline">
                             @csrf
@@ -122,7 +122,7 @@
                 
                 <!-- /.col -->
                 <div class="col-6">
-                  <p class="lead">Tanggal 2/22/2014</p>
+                  <p class="lead">Tanggal {{ $nota->tanggal }}</p>
                 <!-- tabel ringkasan total -->
                   <div class="table-responsive float-right">
                     <table class="table">

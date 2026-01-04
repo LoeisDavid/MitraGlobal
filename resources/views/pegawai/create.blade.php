@@ -23,20 +23,32 @@
                 @csrf
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="kode_pegawai">Kode Pegawai</label>
-                    <input type="text" class="form-control" id="kode_pegawai" name="kode_pegawai" placeholder="Masukkan Kode Pegawai">
+                    <label for="kode_pegawai">Kode Pegawai<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('kode_pegawai') is-invalid @enderror" id="kode_pegawai" name="kode_pegawai" placeholder="Masukkan Kode Pegawai" value="{{ old('kode_pegawai') }}">
+                    @error('kode_pegawai')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                   <div class="form-group">
-                    <label for="nama_pegawai">Nama Pegawai</label>
-                    <input type="text" class="form-control" id="nama_pegawai" name="nama_pegawai" placeholder="Masukkan Nama Pegawai" required>
+                    <label for="nama_pegawai">Nama Pegawai<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_pegawai" name="nama" placeholder="Masukkan Nama Pegawai" required value="{{ old('nama') }}">
+                    @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan Username" required>
+                        <label for="username">Username<span class="text-danger">*</span></label>
+                        <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" placeholder="Masukkan Username" required value="{{ old('username') }}">
+                        @error('username')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Masukkan Password" required>
+                        <label for="password">Password<span class="text-danger">*</span></label>
+                        <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" placeholder="Masukkan Password" required value="{{ old('password') }}">
+                        @error('password')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 <!-- /.card-body -->

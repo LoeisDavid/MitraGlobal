@@ -18,23 +18,60 @@
               <div class="card-header">
                 <h3 class="card-title p-1">Data Nota</h3>
 
-                <div class="card-tools d-flex align-items-center">
+                <div class="d-flex justify-content-between align-items-center mb-3">
                     <!-- Tombol Tambah Nota -->
                     <a href="{{ route("nota.create") }}" class="btn btn-primary btn-sm mr-2">
                         <i class="fas fa-plus mr-1"></i> Tambah Nota
                     </a>
                     
                     <!-- Form Pencarian -->
-                    <form class="d-flex">
-                        <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control" placeholder="Search">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-default">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    @php
+    $hasSearch = request()->filled('keyword')
+               || request()->filled('status')
+               || request()->filled('bulan');
+@endphp
+
+<form class="d-flex align-items-center">
+
+    <input type="text"
+           class="form-control form-control-sm mr-3"
+           placeholder="Search"
+           name="keyword"
+           value="{{ request('keyword') }}">
+
+    <select class="form-control form-control-sm mr-3" name="status">
+        <option value="">Semua Status</option>
+        <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+        <option value="final" {{ request('status') === 'final' ? 'selected' : '' }}>Final</option>
+    </select>
+
+    <select class="form-control form-control-sm mr-3" name="bulan">
+        <option value="">Semua Waktu</option>
+        <option value="1" {{ request('bulan') == '1' ? 'selected' : '' }}>1 Bulan</option>
+        <option value="2" {{ request('bulan') == '2' ? 'selected' : '' }}>2 Bulan</option>
+        <option value="3" {{ request('bulan') == '3' ? 'selected' : '' }}>3 Bulan</option>
+    </select>
+
+    <button class="btn btn-primary btn-sm mr-2">
+        <i class="fas fa-search"></i>
+    </button>
+
+    {{-- Tombol Reset --}}
+    @if($hasSearch)
+        <a href="{{ route('nota.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-undo"></i>
+        </a>
+    @else
+        <button class="btn btn-secondary btn-sm" disabled>
+            <i class="fas fa-undo"></i>
+        </button>
+    @endif
+
+</form>
+
+
+
+
                 </div>
               </div>
               <!-- end card-header -->
@@ -96,14 +133,11 @@
 
                 <!-- card footer -->
                 <div class="card-footer clearfix mt-2">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                    <li class="page-item"><a class="page-link" href="#">«</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">»</a></li>
-                    </ul>
-                </div>
+    <div class="float-right">
+        {{ $nota->links('pagination::bootstrap-4') }}
+    </div>
+</div>
+
                 <!-- end card footer -->
             </div>
             <!-- end tabel Nota -->

@@ -22,13 +22,17 @@
               <form action="{{ route('kategori.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
-                  <div class="form-group">
+
                     <!-- <label for="kode_kategori">Kode Kategori</label> -->
                     <input type="text" class="form-control" id="kode_kategori" name="kode_kategori" placeholder="Masukkan Kode Kategori" hidden>
-                  </div>
+
                   <div class="form-group">
-                    <label for="nama_kategori">Nama Kategori</label>
-                    <input type="text" class="form-control" id="nama_kategori" name="nama" placeholder="Masukkan Nama Kategori" required>
+                    <label for="nama_kategori">Nama Kategori<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_kategori" name="nama" placeholder="Masukkan Nama Kategori" required
+                    value="{{ old("nama") }}">
+                    @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                 </div>
                 <!-- /.card-body -->

@@ -25,9 +25,9 @@
                     </a>
                     
                     <!-- Form Pencarian -->
-                    <form class="d-flex">
+                    <form class="d-flex" method="get" action="{{ route('pegawai.index') }}">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" name="table_search" class="form-control" placeholder="Search">
+                            <input type="text" name="search" class="form-control" placeholder="Search" value="{{ $keyword ?? '' }}">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-default">
                                     <i class="fas fa-search"></i>
@@ -51,21 +51,26 @@
                     </tr>
                   </thead>
                   <tbody>
-                  
+                  @forelse($data as $pegawai)
                     <tr>
-                      <td>ayo</td>
-                      <td>ayo</td>
-                      <td>cihuy</td>
+                      <td>{{ $pegawai->kode_pegawai }}</td>
+                      <td>{{ $pegawai->nama }}</td>
+                      <td>{{ $pegawai->username }}</td>
                       <td class="text-center">
-                        <a href="#" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
-                        <form action="#" method="POST" class="d-inline">
-                          
+                        <a href="{{ route("pegawai.edit", $pegawai->kode_pegawai) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>
+                        <form action="{{ route("pegawai.destroy", $pegawai->kode_pegawai) }}" method="POST" class="d-inline">
+                          @csrf
+                          @method('DELETE')
                           <button class="btn btn-sm btn-danger" onclick="return confirm('Apakah kamu yakin ingin menghapus Pegawai ini?')"><i class="fas fa-trash"></i>
                         </button>
                         </form>
                       </td>
                     </tr>
-
+                  @empty
+                    <tr>
+                      <td colspan="4" class="text-center">Tidak ada data Pegawai.</td>
+                    </tr>
+                  @endforelse
                   </tbody>
                 </table>
               </div>
@@ -73,14 +78,11 @@
 
                 <!-- card footer -->
                 <div class="card-footer clearfix mt-2">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                    <li class="page-item"><a class="page-link" href="#">«</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">»</a></li>
-                    </ul>
-                </div>
+    <div class="float-right">
+        {{ $data->links('pagination::bootstrap-4') }}
+    </div>
+</div>
+
                 <!-- end card footer -->
             </div>
             <!-- end tabel Pegawai -->

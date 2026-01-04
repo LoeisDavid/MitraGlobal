@@ -8,7 +8,11 @@ use App\Models\NotajualDetil_model;
 use Illuminate\Http\Request;
 use App\Models\NotaJual_model;
 use App\Models\Barang_model;
+use App\Models\Merk_model;
+use App\Models\Kategori_model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class NotaBarang extends Controller
 {
@@ -17,44 +21,109 @@ class NotaBarang extends Controller
      */
     public function create($kode_nota)
     {
-        $barang = Barang_model::select('kode_barang', 'nama', 'harga_jual')->get();
-        return view('nota_barang.create', compact('kode_nota', 'barang'));
+        $merk = Merk_model::select('kode_merk', 'nama')->orderBy('nama')->get();
+        $kategori = Kategori_model::select('kode_kategori', 'nama')->orderBy('nama')->get();
+
+        return view('nota_barang.create', compact(
+            'kode_nota',
+            'merk',
+            'kategori'
+        ));
     }
+
+    // AJAX Select2 Barang
+public function ajaxBarang(Request $request)
+{
+    $query = Barang_model::query()
+        ->select('kode_barang', 'nama', 'harga_jual')
+        ->where('stok', '>', 0);
+
+    // search kode ATAU nama barang
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('kode_barang', $request->search)
+              ->orWhere('nama', 'like', '%' . $request->search . '%');
+        });
+    }
+
+    // filter merk
+    if ($request->kode_merk) {
+        $query->where('merk_kode_merk', $request->kode_merk);
+    }
+
+    // filter kategori
+    if ($request->kode_kategori) {
+        $query->where('kategori_kode_kategori', $request->kode_kategori);
+    }
+
+    $barang = $query->paginate(10);
+
+    return response()->json([
+        'results' => $barang->map(function ($row) {
+            return [
+                'id'   => $row->kode_barang,
+                'text' => $row->kode_barang . ' - ' . $row->nama . ' - Rp ' . number_format($row->harga_jual, 0, ',', '.')
+            ];
+        }),
+        'pagination' => [
+            'more' => $barang->hasMorePages()
+        ]
+    ]);
+}
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreNotaJualDetilRequest $request)
 {
-    $validated = $request->validated();
+    try {
+        DB::transaction(function () use ($request) {
+            $validated = $request->validated();
 
-    // Ambil barang
-    $barang = Barang_model::where('kode_barang', $validated['kode_barang'])->firstOrFail();
+            $barang = Barang_model::lockForUpdate()
+                ->where('kode_barang', $validated['kode_barang'])
+                ->firstOrFail();
 
-    // Validasi stok
-    if ($barang->stok < $validated['qty']) {
+            if ($barang->stok < $validated['qty']) {
+                throw new \Exception('Stok barang tidak mencukupi');
+            }
+
+            $barang->decrement('stok', $validated['qty']);
+
+            NotajualDetil_model::create([
+                'notajual_no_nota'    => $request->route('id'),
+                'barang_kode_barang'  => $validated['kode_barang'],
+                'harga'               => $barang->harga_jual,
+                'jumlah'              => $validated['qty'],
+                'diskon'              => $validated['diskon'],
+            ]);
+        });
+
         return redirect()
-            ->back()
-            ->withInput()
-            ->with('error', 'Stok barang tidak mencukupi.');
+            ->route('nota.show', $request->route('id'))
+            ->with('success', 'Barang berhasil ditambahkan ke nota');
+
+    } catch (QueryException $e) {
+        DB::rollBack();
+        Log::error('DB Error tambah barang nota', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Gagal menyimpan data (masalah database)'
+        );
+
+    } catch (\Throwable $e) {
+        DB::rollBack();
+        Log::error('Error tambah barang nota', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            $e->getMessage() ?: 'Terjadi kesalahan saat menambah barang'
+        );
     }
-
-    // Kurangi stok barang
-    $barang->decrement('stok', $validated['qty']);
-
-    // Simpan detail nota
-    NotajualDetil_model::create([
-        'notajual_no_nota'   => $request->route('id'),
-        'barang_kode_barang' => $validated['kode_barang'],
-        'harga'              => $barang->harga_jual,
-        'jumlah'             => $validated['qty'],
-        'diskon'             => $validated['diskon'],
-    ]);
-
-    return redirect()
-        ->route('nota.show', $request->route('id'))
-        ->with('success', 'Barang berhasil ditambahkan ke nota.');
 }
+
 
 
     /**
@@ -74,9 +143,10 @@ class NotaBarang extends Controller
 
     $no_nota = $detil->notajual_no_nota;
 
-    $barang = Barang_model::select('kode_barang', 'nama', 'harga_jual')->get();
+    $merk = Merk_model::select('kode_merk', 'nama')->orderBy('nama')->get();
+    $kategori = Kategori_model::select('kode_kategori', 'nama')->orderBy('nama')->get();
 
-    return view('nota_barang.edit', compact('detil', 'no_nota', 'barang'));
+    return view('nota_barang.edit', compact('detil', 'no_nota', 'merk', 'kategori'));
 }
 
 
@@ -85,49 +155,60 @@ class NotaBarang extends Controller
      */
     public function update(UpdateNotaJualDetilRequest $request, string $id)
 {
-    $validated = $request->validated();
+    try {
+        $no_nota = NotaJualDetil_model::findOrFail($id)->notajual_no_nota;
+        DB::transaction(function () use ($request, $id) {
 
-    $detil = NotajualDetil_model::with('barang')->findOrFail($id);
-    $barangBaru = Barang_model::where('kode_barang', $validated['kode_barang'])->firstOrFail();
+            $validated = $request->validated();
 
-    DB::transaction(function () use ($detil, $barangBaru, $validated) {
+            $detil = NotajualDetil_model::with('barang')
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-        $barangLama = $detil->barang;
-        $qtyLama    = $detil->jumlah;
-        $qtyBaru    = $validated['qty'];
+            $barangLama = $detil->barang;
+            $barangBaru = Barang_model::lockForUpdate()
+                ->where('kode_barang', $validated['kode_barang'])
+                ->firstOrFail();
 
-        /**
-         * 1️⃣ Kembalikan stok barang lama
-         */
-        $barangLama->increment('stok', $qtyLama);
+            // kembalikan stok lama
+            $barangLama->increment('stok', $detil->jumlah);
 
-        /**
-         * 2️⃣ Hitung stok tersedia setelah dikembalikan
-         */
-        $stokTersedia = $barangBaru->fresh()->stok;
+            if ($barangBaru->stok < $validated['qty']) {
+                throw new \Exception('Stok barang tidak mencukupi');
+            }
 
-        if ($qtyBaru > $stokTersedia) {
-            abort(400, 'Stok barang tidak mencukupi.');
-        }
+            $barangBaru->decrement('stok', $validated['qty']);
 
-        /**
-         * 3️⃣ Kurangi stok barang baru
-         */
-        $barangBaru->decrement('stok', $qtyBaru);
+            $detil->update([
+                'barang_kode_barang' => $barangBaru->kode_barang,
+                'harga'              => $barangBaru->harga_jual,
+                'jumlah'             => $validated['qty'],
+                'diskon'             => $validated['diskon'],
+            ]);
+        });
 
-        /**
-         * 4️⃣ Update detail nota
-         */
-        $detil->update([
-            'barang_kode_barang' => $barangBaru->kode_barang,
-            'harga'              => $barangBaru->harga_jual,
-            'jumlah'             => $qtyBaru,
-            'diskon'             => $validated['diskon'],
-        ]);
-    });
+        return redirect()
+            ->route('nota.show', $no_nota)
+            ->with('success', 'Detail nota berhasil diperbarui');
 
-    return redirect()->route('nota.show', $detil->notajual_no_nota);
+    } catch (QueryException $e) {
+        Log::error('DB Error update nota detail', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            'Gagal memperbarui data (database error)'
+        );
+
+    } catch (\Throwable $e) {
+        Log::error('Error update nota detail', ['error' => $e->getMessage()]);
+
+        return back()->withInput()->with(
+            'error',
+            $e->getMessage() ?: 'Terjadi kesalahan saat update data'
+        );
+    }
 }
+
 
 
     /**
@@ -135,16 +216,36 @@ class NotaBarang extends Controller
      */
     public function destroy(string $id)
 {
-    $detil = NotajualDetil_model::with('barang')->findOrFail($id);
+    try {
+        DB::transaction(function () use ($id, &$no_nota) {
 
-    // Kembalikan stok barang
-    $detil->barang->increment('stok', $detil->jumlah);
+            $detil = NotajualDetil_model::with('barang')
+                ->lockForUpdate()
+                ->findOrFail($id);
 
-    $no_nota = $detil->notajual_no_nota;
+            if (!$detil->barang) {
+                throw new \Exception('Barang tidak ditemukan');
+            }
 
-    $detil->delete();
+            $detil->barang->increment('stok', $detil->jumlah);
 
-    return redirect()->route('nota.show', $no_nota);
+            $no_nota = $detil->notajual_no_nota;
+
+            $detil->delete();
+        });
+
+        return redirect()
+            ->route('nota.show', $no_nota)
+            ->with('success', 'Barang berhasil dihapus dari nota');
+
+    } catch (\Throwable $e) {
+        Log::error('Error hapus nota detail', ['error' => $e->getMessage()]);
+
+        return redirect()
+            ->back()
+            ->with('error', 'Gagal menghapus barang dari nota');
+    }
 }
+
 
 }

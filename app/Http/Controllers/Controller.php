@@ -4,9 +4,36 @@ namespace App\Http\Controllers;
 
 use App\Models\Nota_model;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pelanggan_model;
 
 abstract class Controller
 {
+
+    
+
+
+function generateKodePelanggan()
+{
+    return DB::transaction(function () {
+
+        // KUNCI tabel + ambil baris TERAKHIR
+        $last = Pelanggan_model::lockForUpdate()
+            ->orderByRaw('CAST(SUBSTRING(kode_pelanggan, 3) AS UNSIGNED) DESC')
+            ->first();
+
+        if (!$last) {
+            return 'CS001';
+        }
+
+        $lastNumber = (int) substr($last->kode_pelanggan, 2);
+        $nextNumber = $lastNumber + 1;
+
+        return 'CS' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+    });
+}
+
+
+
    function generateKodeMerk(string $nama): string
 {
     $nama = trim($nama);
