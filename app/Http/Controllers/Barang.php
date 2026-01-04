@@ -39,8 +39,10 @@ public function index(Request $request)
             ->orderBy('created_at', 'desc')
             ->paginate(10)
             ->appends($request->query());
+        
+        $lowStockBarangs = Barang_model::where('stok', '<', 10)->get();
 
-        return view('barang.index', compact('barangs', 'keyword'));
+        return view('barang.index', compact('barangs', 'keyword', 'lowStockBarangs'));
 
     } catch (\Throwable $e) {
 
