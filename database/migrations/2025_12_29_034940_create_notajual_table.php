@@ -12,14 +12,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('notajual', function (Blueprint $table) {
-            $table->id('no_nota');
+            $table->string('no_nota')->primary();
             $table->date('tanggal');
+            $table->boolean('draft')->default(true);
+            $table->char('pelanggan_kode_pelanggan', 10);
+            $table->char('pegawai_kode_pegawai', 10);
+            $table->foreign('pelanggan_kode_pelanggan')
+                ->references('kode_pelanggan')
+                ->on('pelanggan');
 
-            $table->foreignId('pelanggan_kode_pelanggan')
-                ->constrained('pelanggan', 'kode_pelanggan');
+            $table->foreign('pegawai_kode_pegawai')
+                ->references('kode_pegawai')
+                ->on('pegawai');
 
-            $table->foreignId('pegawai_kode_pegawai')
-                ->constrained('pegawai', 'kode_pegawai');
+            $table->timestamps();
         });
     }
 

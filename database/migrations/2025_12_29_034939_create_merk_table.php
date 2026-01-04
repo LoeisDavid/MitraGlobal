@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up(): void  
     {
         Schema::create('merk', function (Blueprint $table) {
-            $table->id('kode_merk');
+            $table->char('kode_merk', 10)->primary();
             $table->string('nama', 45);
+            $table->timestamps();
         });
     }
 

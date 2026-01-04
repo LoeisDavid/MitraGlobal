@@ -12,16 +12,27 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('barang', function (Blueprint $table) {
-            $table->id('kode_barang');
-            $table->string('barcode', 13);
+            $table->string('kode_barang')->primary();
+            $table->string('barcode', 13)->nullable()->unique();
             $table->string('nama', 45);
             $table->decimal('harga_jual', 15, 2);
             $table->integer('stok');
 
-            $table->foreignId('merk_kode_merk')->constrained('merk', 'kode_merk');
-            $table->char('kategori_kode_kategori', 2);
-            $table->foreign('kategori_kode_kategori')->references('kode_kategori')->on('kategori');
+            // foreign key ke merk (string/char)
+            $table->string('merk_kode_merk');
+            $table->foreign('merk_kode_merk')
+                ->references('kode_merk')
+                ->on('merk');
+
+            // foreign key ke kategori (char(2))
+            $table->char('kategori_kode_kategori');
+            $table->foreign('kategori_kode_kategori')
+                ->references('kode_kategori')
+                ->on('kategori');
+
+                $table->timestamps();
         });
+
     }
 
     /**
