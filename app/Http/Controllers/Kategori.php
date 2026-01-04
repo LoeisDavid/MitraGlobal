@@ -5,17 +5,50 @@ namespace App\Http\Controllers;
 use App\Models\Kategori_model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class Kategori extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $kategori = Kategori_model::select('kode_kategori', 'nama')->get();
-        return view('kategori.index', compact('kategori'));
+
+public function index(Request $request)
+{
+    try {
+        $keyword = $request->keyword;
+
+        $query = Kategori_model::select('kode_kategori', 'nama');
+
+        // SEARCH (dibungkus supaya orWhere tidak liar)
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                  ->orWhere('kode_kategori', 'like', "%{$keyword}%");
+            });
+        }
+
+        // URUTKAN A–Z + PAGINATION 10
+        $kategori = $query
+            ->orderBy('nama', 'asc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('kategori.index', compact('kategori', 'keyword'));
+
+    } catch (\Throwable $e) {
+
+        Log::error('Gagal mengambil data kategori', [
+            'error' => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'error' => 'Gagal mengambil data kategori.'
+        ]);
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.
