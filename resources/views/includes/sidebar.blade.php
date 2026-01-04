@@ -1,14 +1,14 @@
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a href="index3.html" class="brand-link text-center">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+    <a href="{{ route('dashboard.index') }}" class="brand-link text-center">
+      <span class="brand-text font-weight-light">MitraGlobal</span>
     </a>
 
   <!-- Sidebar -->
 <div class="sidebar d-flex flex-column">
 
   <!-- Sidebar Menu -->
-  <nav class="mt-2 flex-grow-1">
+  <nav class="mt-2 flex-1">
     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
       <!-- menu kamu yang tadi, TIDAK DIUBAH -->
       <li class="nav-item">
@@ -81,7 +81,7 @@
   <!-- /.sidebar-menu -->
 
   <!-- LOGOUT (BOTTOM) -->
-  <div class="p-3 border-top">
+  <div class="p-3 border-top mt-auto">
     <form action="{{ route('logout') }}" method="POST">
       @csrf
       <button type="submit" class="btn btn-danger btn-block">

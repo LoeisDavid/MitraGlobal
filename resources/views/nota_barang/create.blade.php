@@ -80,7 +80,7 @@
                             <div class="form-group">
                                 <label for="diskon">Diskon</label>
                                 <input type="number" class="form-control @error('diskon') is-invalid
-                                @enderror" value="{{ old('diskon') }}0" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                                @enderror" value="{{ old('diskon', 0) }}" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
                             @error('diskon')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
