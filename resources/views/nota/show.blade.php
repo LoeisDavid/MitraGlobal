@@ -27,10 +27,11 @@
                 <div class="col-sm-4 invoice-col">
                   Pegawai
                   <address>
-                    <strong>Admin, Inc.</strong><br>
-                    795 Folsom Ave, Suite 600<br>
-                    San Francisco, CA 94107<br>
-                    Phone: (804) 123-5432<br>
+                    <strong>{{ $nota->pegawai->nama }}</strong><br>
+                    JL PM NOOR RAPAK BINUANG 2<br>
+                    SAMPING POM BENSIN NO 32<br>
+                    SAMARINDA<br>
+                    Phone: 082190215433<br>
                   </address>
                 </div>
                 <!-- /.col -->

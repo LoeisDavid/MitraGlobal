@@ -76,8 +76,8 @@
         <tr>
             <td width="35%">
     <div class="title">Mitra Global</div>
-    <div>Komplek sidotopo dipo 2/2B, Suarabaya, Jawa Timur</div>
-    <div>Telp: 0812-3456-7890</div>
+    <div>JL PM NOOR RAPAK BINUANG 2, SAMPING POM BENSIN NO 32 SAMARINDA</div>
+    <div>Telp: 082190215433</div>
 
     <div style="margin-top:10px;">Pegawai</div>
     <div class="font-bold">{{ $nota->pegawai->nama }}</div>
