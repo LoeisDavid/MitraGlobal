@@ -80,7 +80,7 @@
                             <div class="form-group">
                                 <label for="diskon">Diskon</label>
                                 <input type="number" class="form-control @error('diskon') is-invalid
-                                @enderror" value="{{ old('diskon') }}0" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                                @enderror" value="{{ old('diskon') ?? 0 }}" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
                             @error('diskon')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -105,23 +105,30 @@
     <!-- Select2 JS -->
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
 <script>
-$(function () {
+$(document).ready(function () {
 
-    // KATEGORI & MERK
-    $('.select2merk').select2({
+    // =========================
+    // SELECT2 MERK
+    // =========================
+    $('#filterMerk').select2({
         theme: 'bootstrap4',
         placeholder: '-- Cari merk --',
         allowClear: true
     });
 
-    $('.select2kategori').select2({
+    // =========================
+    // SELECT2 KATEGORI
+    // =========================
+    $('#filterKategori').select2({
         theme: 'bootstrap4',
         placeholder: '-- Cari kategori --',
         allowClear: true
     });
 
-
-        $('#selectBarang').select2({
+    // =========================
+    // SELECT2 BARANG (AJAX)
+    // =========================
+    $('#selectBarang').select2({
         theme: 'bootstrap4',
         placeholder: '-- Cari barang --',
         allowClear: true,
@@ -151,6 +158,51 @@ $(function () {
         }
     });
 
+    // =========================
+    // RESET BARANG JIKA FILTER BERUBAH
+    // =========================
+    $('#filterMerk, #filterKategori').on('change', function () {
+        $('#selectBarang').val(null).trigger('change');
+    });
+
+    // =========================
+    // RESTORE OLD BARANG (INI POIN UTAMA)
+    // =========================
+    const oldBarang = "{{ old('kode_barang') }}";
+
+    if (!oldBarang) {
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('nota_barang.ajaxBarang') }}",
+        dataType: 'json',
+        data: {
+            search: oldBarang
+        },
+        success: function (response) {
+
+            if (!response.results || response.results.length === 0) {
+                return;
+            }
+
+            const barang = response.results[0];
+
+            const option = new Option(
+                barang.text,
+                barang.id,
+                true,
+                true
+            );
+
+            $('#selectBarang')
+                .append(option)
+                .trigger('change');
+        }
+    });
+
 });
 </script>
+
+
 @endpush
