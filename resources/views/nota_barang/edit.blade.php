@@ -31,21 +31,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <!-- select -->
-                            <div class="form-group">
-                                <label for="selectBarang @error('kode_barang') is-invalid
-                                @enderror">Barang<span class="text-danger">*</span></label>
-                                <select name="kode_barang"
-                                        id="selectBarang"
-                                        class="form-control"
-                                        required>
-                                </select>
-                                @error('kode_barang')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
                             <div class="form-group">
                                 <label>Merk</label>
                                 <select id="filterMerk" class="form-control select2merk">
@@ -65,6 +50,21 @@
                                         <option value="{{ $k->kode_kategori }}">{{ $k->nama }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+                        </div>
+                                                <div class="col-md-4">
+                            <!-- select -->
+                            <div class="form-group">
+                                <label for="selectBarang @error('kode_barang') is-invalid
+                                @enderror">Barang<span class="text-danger">*</span></label>
+                                <select name="kode_barang"
+                                        id="selectBarang"
+                                        class="form-control"
+                                        required>
+                                </select>
+                                @error('kode_barang')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                         <div class="col-md-12">
