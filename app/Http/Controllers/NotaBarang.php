@@ -32,41 +32,45 @@ class NotaBarang extends Controller
     }
 
     // AJAX Select2 Barang
-    public function ajaxBarang(Request $request)
-    {
-        $query = Barang_model::query()
-            ->select('kode_barang', 'nama', 'harga_jual')
-            ->where('stok', '>', 0);
+public function ajaxBarang(Request $request)
+{
+    $query = Barang_model::query()
+        ->select('kode_barang', 'nama', 'harga_jual')
+        ->where('stok', '>', 0);
 
-        // search nama barang
-        if ($request->search) {
-            $query->where('nama', 'like', '%' . $request->search . '%');
-        }
-
-        // filter merk (opsional)
-        if ($request->kode_merk) {
-            $query->where('merk_kode_merk', $request->kode_merk);
-        }
-
-        // filter kategori (opsional)
-        if ($request->kode_kategori) {
-            $query->where('kategori_kode_kategori', $request->kode_kategori);
-        }
-
-        $barang = $query->paginate(10);
-
-        return response()->json([
-            'results' => $barang->map(function ($row) {
-                return [
-                    'id'   => $row->kode_barang,
-                    'text' => $row->kode_barang . ' - ' . $row->nama . ' - Rp ' . number_format($row->harga_jual, 0, ',', '.')
-                ];
-            }),
-            'pagination' => [
-                'more' => $barang->hasMorePages()
-            ]
-        ]);
+    // search kode ATAU nama barang
+    if ($request->search) {
+        $query->where(function ($q) use ($request) {
+            $q->where('kode_barang', $request->search)
+              ->orWhere('nama', 'like', '%' . $request->search . '%');
+        });
     }
+
+    // filter merk
+    if ($request->kode_merk) {
+        $query->where('merk_kode_merk', $request->kode_merk);
+    }
+
+    // filter kategori
+    if ($request->kode_kategori) {
+        $query->where('kategori_kode_kategori', $request->kode_kategori);
+    }
+
+    $barang = $query->paginate(10);
+
+    return response()->json([
+        'results' => $barang->map(function ($row) {
+            return [
+                'id'   => $row->kode_barang,
+                'text' => $row->kode_barang . ' - ' . $row->nama . ' - Rp ' . number_format($row->harga_jual, 0, ',', '.')
+            ];
+        }),
+        'pagination' => [
+            'more' => $barang->hasMorePages()
+        ]
+    ]);
+}
+
 
     /**
      * Store a newly created resource in storage.
