@@ -2,7 +2,11 @@
 
 @section('title', 'Ubah Nota')
 @section('page-title', 'Form Nota')
-
+@push('select2css')
+    <!-- Select2 CSS -->
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endpush
 @section('breadcrumb')
     <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item"><a href="{{ route("nota.index") }}">Nota</a></li>
@@ -75,3 +79,21 @@
         </div>
     </div>
 @endsection
+@push('select2js')
+    <!-- Select2 JS -->
+    <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#nama_pegawai').select2({
+                theme: 'bootstrap4',
+                placeholder: "-- Pilih Pegawai --",
+                allowClear: true
+            });
+            $('#nama_pelanggan').select2({
+                theme: 'bootstrap4',
+                placeholder: "-- Pilih Pelanggan --",
+                allowClear: true
+            });
+        });
+    </script>
+@endpush
