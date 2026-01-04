@@ -24,12 +24,15 @@
                 @method('PUT')
                 <div class="card-body">
                   <div class="form-group">
-                    <!-- <label for="kode_Merk">Kode Merk</label> -->
+                    <label for="kode_Merk">Kode Merk</label>
                     <input type="text" class="form-control" value="{{ $merk->kode_merk }}" name="kode_merk" id="kode_Merk" placeholder="Masukkan Kode Merk" disabled>
                   </div>
                   <div class="form-group">
-                    <label for="nama_Merk">Nama Merk</label>
-                    <input type="text" class="form-control" value="{{ $merk->nama }}" name="nama" id="nama_Merk" placeholder="Masukkan Nama Merk">
+                    <label for="nama_Merk">Nama Merk<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama', $merk->nama) }}" name="nama" id="nama_Merk" placeholder="Masukkan Nama Merk">
+                    @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                 </div>
                 <!-- /.card-body -->

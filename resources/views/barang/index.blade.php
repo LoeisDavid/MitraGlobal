@@ -60,7 +60,7 @@
                       <td>{{ $barang->nama }}</td>
                       <td>{{ $barang->kategori->nama }}</td>
                       <td>{{ $barang->merk->nama }}</td>
-                      <td>{{ $barang->harga_jual }}</td>
+                      <td>Rp. {{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
                       <td>{{ $barang->stok }}</td>
                       <td class="text-center">
                         <a href="{{ route('barang.edit', ['kode_barang' => $barang->kode_barang]) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>

@@ -48,7 +48,7 @@ class Barang extends Controller
         try {
             $data = $request->validated();
             $data['kode_barang'] = $data['merk_kode_merk'].'-'.$data['kategori_kode_kategori'].'-'.$this->generateKodeBarang($data['nama']);
-            $barang = Barang_model::create($data);
+            Barang_model::create($data);
 
             return redirect()->route('barang.index')->with('success', 'Data barang berhasil disimpan.');
         } catch (\Exception $e) {

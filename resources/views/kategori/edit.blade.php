@@ -28,8 +28,11 @@
                     <input type="text" class="form-control" id="kode_kategori" name="kode_kategori" placeholder="Masukkan Kode Kategori" value="{{ $kategori->kode_kategori }}" disabled>
                   </div>
                   <div class="form-group">
-                    <label for="nama_kategori">Nama Kategori</label>
-                    <input type="text" class="form-control" id="nama_kategori" name="nama" placeholder="Masukkan Nama Kategori" value="{{ $kategori->nama }}">
+                    <label for="nama_kategori">Nama Kategori<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_kategori" name="nama" placeholder="Masukkan Nama Kategori" value="{{ old('nama', $kategori->nama) }}">
+                    @error('nama')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                 </div>
                 <!-- /.card-body -->

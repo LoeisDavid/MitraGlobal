@@ -68,6 +68,9 @@ Route::prefix('nota')->name('nota.')->group(function () {
 });
 
 Route::prefix('nota_barang')->name('nota_barang.')->group(function () {
+
+    Route::get('/ajax/barang', [NotaBarang::class, 'ajaxBarang'])->name('ajaxBarang');
+
     Route::get('/{id}/create', [NotaBarang::class, 'create'])->name('create');
     Route::post('/{id}/store', [NotaBarang::class, 'store'])->name('store');
     Route::get('/{id}/edit', [NotaBarang::class, 'edit'])->name('edit');

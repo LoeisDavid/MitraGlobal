@@ -35,13 +35,9 @@ class Pelanggan extends Controller
      */
     public function store(StorePelangganRequest $request)
 {
+    $validated = $request->validated();
     try {
-        Pelanggan_model::create([
-            'kode_pelanggan' => strtoupper($request->kode_pelanggan),
-            'nama'           => $request->nama_pelanggan,
-            'alamat'         => $request->alamat,
-            'telepon'        => $request->telepon,
-        ]);
+        Pelanggan_model::create($validated);
 
         return redirect()
             ->route('pelanggan.index')
@@ -88,14 +84,10 @@ class Pelanggan extends Controller
      */
     public function update(UpdatePelangganRequest $request, string $kode_pelanggan)
 {
+    $validated = $request->validated();
     try {
         $updated = Pelanggan_model::where('kode_pelanggan', $kode_pelanggan)
-            ->update([
-                'kode_pelanggan' => strtoupper($request->kode_pelanggan),
-                'nama'           => $request->nama_pelanggan,
-                'alamat'         => $request->alamat,
-                'telepon'        => $request->telepon,
-            ]);
+            ->update($validated);
 
         if ($updated === 0) {
             throw new \Exception('Pelanggan tidak ditemukan');

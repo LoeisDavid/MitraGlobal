@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMerkRequest;
+use App\Http\Requests\UpdateMerkRequest;
 use Illuminate\Http\Request;
 use App\Models\Merk_model;
 class Merk extends Controller
@@ -26,13 +28,11 @@ class Merk extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreMerkRequest $request)
     {
-        $request->validate([
-            'nama' => 'required|string|max:100',
-        ]);
+        $validated = $request->validated();
 
-        $kode_merk = $this->generateKodeMerk($request->nama);
+        $kode_merk = $this->generateKodeMerk($validated['nama']);
 
         
         if ($kode_merk) {
@@ -44,10 +44,7 @@ class Merk extends Controller
 
         try {
 
-        Merk_model::create([
-            'kode_merk' => $kode_merk,
-            'nama' => $request->nama,
-        ]);
+        Merk_model::create($validated + ['kode_merk' => $kode_merk]);
 
             } catch (\Exception $e) {
                 return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data merk: ' . $e->getMessage()]);
@@ -80,18 +77,16 @@ class Merk extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateMerkRequest $request, string $id)
     {
-        $request->validate([
-            'nama' => 'required|string|max:100',
-        ]);
+        $validated = $request->validated();
 
         $merk = Merk_model::where('kode_merk', $id)->first();
         if (!$merk) {
             return redirect()->back()->with('error', 'Merk tidak ditemukan.');
         }
 
-        $kode_merk = $this->generateKodeMerk($request->nama);
+        $kode_merk = $this->generateKodeMerk($validated['nama']);
 
         try {
             $existingMerk = Merk_model::where('kode_merk', $kode_merk)
@@ -100,10 +95,7 @@ class Merk extends Controller
             if ($existingMerk) {
                 return redirect()->back()->with('error', 'Kode/Nama Merk sudah digunakan.');
             }
-            $merk->update([
-            'kode_merk' => $kode_merk,
-            'nama' => $request->nama,
-        ]);
+            $merk->update($validated + ['kode_merk' => $kode_merk]);
 
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat memeriksa kode merk: ' . $e->getMessage()]);

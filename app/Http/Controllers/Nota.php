@@ -140,7 +140,7 @@ public function store(StoreNotaRequest $request)
         $validated = $request->validated();
         $validated['no_nota'] = $this->generateNoNota($validated['tanggal']);
         Nota_model::where('no_nota', $no_nota)->update($validated);
-        return redirect()->route('nota.index');
+        return redirect()->route('nota.index')->with('success', 'Data nota berhasil diperbarui.');
     }
 
     public function finalize(string $no_nota)
