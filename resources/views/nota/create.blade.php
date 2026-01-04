@@ -22,7 +22,8 @@
               <form action="{{ route('nota.store') }}" method="POST">
                 @csrf
                 <div class="card-body">
-
+                  <div class="form-group">
+                    <!-- <label for="no_nota">No Nota</label> -->
                     <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Masukkan No Nota" hidden value="p">
 
                   <div class="form-group">

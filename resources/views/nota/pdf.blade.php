@@ -50,10 +50,6 @@
     background-color: #ffffff;
 }
 
-.items-table td {
-    border-bottom: 1.5px solid #cfcfcfff;
-}
-
 
 
         /* Penyelarasan Teks */

@@ -8,17 +8,49 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 
 
-
 class Pegawai extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $data = Pegawai_model::all();
-        return view('pegawai.index', compact('data'));
+
+public function index(Request $request)
+{
+    try {
+        $keyword = $request->search;
+
+        $query = Pegawai_model::select('kode_pegawai', 'nama', 'username');
+
+        // SEARCH (sudah benar, kita pertahankan)
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                  ->orWhere('username', 'like', "%{$keyword}%")
+                  ->orWhere('kode_pegawai', 'like', "%{$keyword}%");
+            });
+        }
+
+        // URUTKAN A–Z + PAGINATION 10
+        $data = $query
+            ->orderBy('nama', 'asc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('pegawai.index', compact('data', 'keyword'));
+
+    } catch (\Throwable $e) {
+
+        Log::error('Gagal mengambil data pegawai', [
+            'error' => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'error' => 'Gagal mengambil data pegawai.'
+        ]);
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.

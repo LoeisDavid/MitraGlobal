@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Carbon\Carbon;
 
 
 class Nota extends Controller
@@ -20,11 +21,62 @@ class Nota extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $nota = Nota_model::with(['pelanggan', 'pegawai'])->get();
-        return view('nota.index', compact('nota'));
+
+public function index(Request $request)
+{
+    try {
+        $query = Nota_model::with(['pelanggan', 'pegawai']);
+
+        // SEARCH KEYWORD
+        if ($request->filled('keyword')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('no_nota', 'like', '%' . $request->keyword . '%')
+                  ->orWhereHas('pelanggan', function ($q2) use ($request) {
+                      $q2->where('nama', 'like', '%' . $request->keyword . '%');
+                  })
+                  ->orWhereHas('pegawai', function ($q3) use ($request) {
+                      $q3->where('nama', 'like', '%' . $request->keyword . '%');
+                  });
+            });
+        }
+
+        // FILTER STATUS (BOOLEAN)
+        if ($request->filled('status')) {
+            if ($request->status === 'draft') {
+                $query->where('draft', true);
+            } elseif ($request->status === 'final') {
+                $query->where('draft', false);
+            }
+        }
+
+        // FILTER BULAN
+        if ($request->filled('bulan')) {
+            $query->where('tanggal', '>=', Carbon::now()->subMonths((int) $request->bulan));
+        }
+
+        // URUT + PAGINATE
+        $nota = $query
+            ->orderBy('tanggal', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('nota.index', compact('nota', 'request'));
+
+    } catch (\Throwable $e) {
+
+        // LOG ERROR (WAJIB, jangan cuma return kosong)
+        Log::error('Gagal load data nota', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        // fallback ke halaman dengan pesan error
+        return redirect()
+            ->back()
+            ->with('error', 'Terjadi kesalahan saat memuat data nota.');
     }
+}
+
 
     /**
      * Show the form for creating a new resource.

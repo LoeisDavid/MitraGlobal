@@ -15,11 +15,50 @@ class Pelanggan extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $pelanggan = Pelanggan_model::select('kode_pelanggan', 'nama', 'alamat', 'telepon')->get();
-        return view('pelanggan.index', compact('pelanggan'));
+
+public function index(Request $request)
+{
+    try {
+        $keyword = $request->keyword;
+
+        $query = Pelanggan_model::select(
+            'kode_pelanggan',
+            'nama',
+            'alamat',
+            'telepon'
+        );
+
+        // SEARCH (dikurung biar orWhere tidak liar)
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('kode_pelanggan', 'like', "%{$keyword}%")
+                  ->orWhere('nama', 'like', "%{$keyword}%")
+                  ->orWhere('alamat', 'like', "%{$keyword}%")
+                  ->orWhere('telepon', 'like', "%{$keyword}%");
+            });
+        }
+
+        // URUT A–Z + PAGINATION 10
+        $pelanggan = $query
+            ->orderBy('nama', 'asc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('pelanggan.index', compact('pelanggan', 'keyword'));
+
+    } catch (\Throwable $e) {
+
+        Log::error('Gagal mengambil data pelanggan', [
+            'error' => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'error' => 'Gagal mengambil data pelanggan.'
+        ]);
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.

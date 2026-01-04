@@ -6,16 +6,49 @@ use App\Http\Requests\StoreMerkRequest;
 use App\Http\Requests\UpdateMerkRequest;
 use Illuminate\Http\Request;
 use App\Models\Merk_model;
+use Illuminate\Support\Facades\Log;
 class Merk extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $data = Merk_model::all();
-        return view('merk.index', compact('data'));
+
+public function index(Request $request)
+{
+    try {
+        $keyword = $request->keyword;
+
+        $query = Merk_model::select('kode_merk', 'nama');
+
+        // SEARCH (dibungkus biar orWhere tidak kabur)
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                  ->orWhere('kode_merk', 'like', "%{$keyword}%");
+            });
+        }
+
+        // URUT A–Z + PAGINATION 10
+        $data = $query
+            ->orderBy('nama', 'asc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('merk.index', compact('data', 'keyword'));
+
+    } catch (\Throwable $e) {
+
+        Log::error('Gagal mengambil data merk', [
+            'error' => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'error' => 'Gagal mengambil data merk.'
+        ]);
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.

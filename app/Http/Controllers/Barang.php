@@ -6,23 +6,55 @@ use App\Models\Barang_model;
 use App\Http\Requests\StoreBarangRequest;
 use App\Http\Requests\UpdateBarangRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class Barang extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        try {
-            $barangs = Barang_model::with(['merk', 'kategori'])->get();
 
-        return view('barang.index', compact('barangs'));
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat mengambil data barang: ' . $e->getMessage()]);
+public function index(Request $request)
+{
+    try {
+        $keyword = $request->keyword;
+
+        $query = Barang_model::with(['merk', 'kategori']);
+
+        // SEARCH
+        if (!empty($keyword)) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('nama', 'like', "%{$keyword}%")
+                  ->orWhereHas('merk', function ($q2) use ($keyword) {
+                      $q2->where('nama', 'like', "%{$keyword}%");
+                  })
+                  ->orWhereHas('kategori', function ($q3) use ($keyword) {
+                      $q3->where('nama', 'like', "%{$keyword}%");
+                  });
+            });
         }
-        
+
+        // TERBARU + PAGINATION
+        $barangs = $query
+            ->orderBy('created_at', 'desc')
+            ->paginate(10)
+            ->appends($request->query());
+
+        return view('barang.index', compact('barangs', 'keyword'));
+
+    } catch (\Throwable $e) {
+
+        Log::error('Gagal mengambil data barang', [
+            'error' => $e->getMessage()
+        ]);
+
+        return back()->withErrors([
+            'error' => 'Gagal mengambil data barang.'
+        ]);
     }
+}
+
+
 
     /**
      * Show the form for creating a new resource.
