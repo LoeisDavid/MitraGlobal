@@ -24,32 +24,44 @@
                 @method('PUT')
                 <div class="card-body">
                   <div class="form-group">
-                    <label for="no_nota">No Nota</label>
+                    <!-- <label for="no_nota">No Nota</label> -->
                     <input type="text" class="form-control" id="no_nota" name="no_nota" placeholder="Masukkan No Nota" value="{{ $nota->no_nota }}" disabled>
                   </div>
                   <div class="form-group">
-                    <label for="tanggal">Tanggal</label>
-                    <input type="date" class="form-control" id="tanggal" name="tanggal" placeholder="Masukkan Tanggal Nota" required value="{{ $nota->tanggal }}">
+                    <label for="tanggal">Tanggal<span class="text-danger">*</span></label>
+                    <input type="date" class="form-control @error('tanggal') is-invalid
+                    @enderror" id="tanggal" name="tanggal" placeholder="Masukkan Tanggal Nota" required value="{{ old('tanggal', $nota->tanggal) }}">
+                    @error('tanggal')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                   </div>
                   <!-- select -->
                     <div class="form-group">
-                        <label for="nama_pegawai">Nama Pegawai</label>
-                        <select class="form-control" name="pegawai_kode_pegawai" id="nama_pegawai" required>
+                        <label for="nama_pegawai">Nama Pegawai<span class="text-danger">*</span></label>
+                        <select class="form-control @error('pegawai_kode_pegawai') is-invalid
+                        @enderror" name="pegawai_kode_pegawai" id="nama_pegawai" required>
                           <option value="">-- Pilih Pegawai --</option>
                         @foreach($pegawai as $row)
-                            <option value="{{ $row->kode_pegawai }}" {{ $row->kode_pegawai == $nota->pegawai_kode_pegawai ? 'selected' : '' }}>{{ $row->nama }}</option>
+                            <option value="{{ $row->kode_pegawai }}" {{ old('pegawai_kode_pegawai', $nota->pegawai_kode_pegawai) == $row->kode_pegawai ? 'selected' : '' }}>{{ $row->nama }}</option>
                         @endforeach
                         </select>
+                        @error('pegawai_kode_pegawai')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                   <!-- select -->
                     <div class="form-group">
-                        <label for="nama_pelanggan">Nama Pelanggan</label>
-                        <select class="form-control" name="pelanggan_kode_pelanggan" id="nama_pelanggan" required>
+                        <label for="nama_pelanggan">Nama Pelanggan<span class="text-danger">*</span></label>
+                        <select class="form-control @error('pelanggan_kode_pelanggan') is-invalid
+                        @enderror" name="pelanggan_kode_pelanggan" id="nama_pelanggan" required>
                           <option value="">-- Pilih Pelanggan --</option>
                         @foreach($pelanggan as $row)
-                            <option value="{{ $row->kode_pelanggan }}" {{ $row->kode_pelanggan == $nota->pelanggan_kode_pelanggan ? 'selected' : '' }}>{{ $row->nama }}</option>
+                            <option value="{{ $row->kode_pelanggan }}" {{ old('pelanggan_kode_pelanggan', $nota->pelanggan_kode_pelanggan) == $row->kode_pelanggan ? 'selected' : '' }}>{{ $row->nama }}</option>
                         @endforeach
                         </select>
+                        @error('pelanggan_kode_pelanggan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
                 <!-- /.card-body -->

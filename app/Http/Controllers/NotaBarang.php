@@ -8,6 +8,8 @@ use App\Models\NotajualDetil_model;
 use Illuminate\Http\Request;
 use App\Models\NotaJual_model;
 use App\Models\Barang_model;
+use App\Models\Merk_model;
+use App\Models\Kategori_model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
@@ -19,8 +21,51 @@ class NotaBarang extends Controller
      */
     public function create($kode_nota)
     {
-        $barang = Barang_model::select('kode_barang', 'nama', 'harga_jual')->get();
-        return view('nota_barang.create', compact('kode_nota', 'barang'));
+        $merk = Merk_model::select('kode_merk', 'nama')->orderBy('nama')->get();
+        $kategori = Kategori_model::select('kode_kategori', 'nama')->orderBy('nama')->get();
+
+        return view('nota_barang.create', compact(
+            'kode_nota',
+            'merk',
+            'kategori'
+        ));
+    }
+
+    // AJAX Select2 Barang
+    public function ajaxBarang(Request $request)
+    {
+        $query = Barang_model::query()
+            ->select('kode_barang', 'nama', 'harga_jual')
+            ->where('stok', '>', 0);
+
+        // search nama barang
+        if ($request->search) {
+            $query->where('nama', 'like', '%' . $request->search . '%');
+        }
+
+        // filter merk (opsional)
+        if ($request->kode_merk) {
+            $query->where('merk_kode_merk', $request->kode_merk);
+        }
+
+        // filter kategori (opsional)
+        if ($request->kode_kategori) {
+            $query->where('kategori_kode_kategori', $request->kode_kategori);
+        }
+
+        $barang = $query->paginate(10);
+
+        return response()->json([
+            'results' => $barang->map(function ($row) {
+                return [
+                    'id'   => $row->kode_barang,
+                    'text' => $row->kode_barang . ' - ' . $row->nama . ' - Rp ' . number_format($row->harga_jual, 0, ',', '.')
+                ];
+            }),
+            'pagination' => [
+                'more' => $barang->hasMorePages()
+            ]
+        ]);
     }
 
     /**
@@ -92,9 +137,10 @@ class NotaBarang extends Controller
 
     $no_nota = $detil->notajual_no_nota;
 
-    $barang = Barang_model::select('kode_barang', 'nama', 'harga_jual')->get();
+    $merk = Merk_model::select('kode_merk', 'nama')->orderBy('nama')->get();
+    $kategori = Kategori_model::select('kode_kategori', 'nama')->orderBy('nama')->get();
 
-    return view('nota_barang.edit', compact('detil', 'no_nota', 'barang'));
+    return view('nota_barang.edit', compact('detil', 'no_nota', 'merk', 'kategori'));
 }
 
 
@@ -104,6 +150,7 @@ class NotaBarang extends Controller
     public function update(UpdateNotaJualDetilRequest $request, string $id)
 {
     try {
+        $no_nota = NotaJualDetil_model::findOrFail($id)->notajual_no_nota;
         DB::transaction(function () use ($request, $id) {
 
             $validated = $request->validated();
@@ -135,7 +182,7 @@ class NotaBarang extends Controller
         });
 
         return redirect()
-            ->route('nota.show', $request->route('id'))
+            ->route('nota.show', $no_nota)
             ->with('success', 'Detail nota berhasil diperbarui');
 
     } catch (QueryException $e) {

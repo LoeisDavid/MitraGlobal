@@ -27,10 +27,17 @@ class StoreBarangRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'kode_barang.unique' => 'Kode barang sudah dipakai. Kreatif dikit.',
-            'barcode.size' => 'Barcode harus 13 karakter. Bukan 12, bukan 14.',
+            'kode_barang.unique' => 'Kode barang sudah digunakan.',
+            // 'barcode.size' => 'Barcode harus 13 karakter. Bukan 12, bukan 14.',
             'merk_kode_merk.exists' => 'Merk tidak ditemukan.',
             'kategori_kode_kategori.exists' => 'Kategori tidak ditemukan.',
+            'nama.required' => 'Nama barang wajib diisi.',
+            'harga_jual.required' => 'Harga jual wajib diisi.',
+            'harga_jual.numeric' => 'Harga jual harus berupa angka.',
+            'harga_jual.min' => 'Harga jual tidak boleh kurang dari 0.',
+            'stok.required' => 'Stok wajib diisi.',
+            'stok.integer' => 'Stok harus berupa angka.',
+            'stok.min' => 'Stok tidak boleh kurang dari 0.',
         ];
     }
 }

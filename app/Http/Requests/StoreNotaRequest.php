@@ -28,4 +28,17 @@ class StoreNotaRequest extends FormRequest
             'pegawai_kode_pegawai' => 'required|string|exists:pegawai,kode_pegawai',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'no_nota.unique' => 'No. Nota sudah digunakan.',
+            'tanggal.required' => 'Tanggal wajib diisi.',
+            'tanggal.date' => 'Tanggal tidak valid.',
+            'pelanggan_kode_pelanggan.required' => 'Pelanggan wajib dipilih.',
+            'pelanggan_kode_pelanggan.exists' => 'Pelanggan tidak ditemukan.',
+            'pegawai_kode_pegawai.required' => 'Pegawai wajib dipilih.',
+            'pegawai_kode_pegawai.exists' => 'Pegawai tidak ditemukan.',
+        ];
+    }
 }

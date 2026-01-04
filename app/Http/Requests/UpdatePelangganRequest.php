@@ -14,6 +14,13 @@ class UpdatePelangganRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'kode_pelanggan' => strtoupper($this->kode_pelanggan),
+        ]);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,9 +31,20 @@ class UpdatePelangganRequest extends FormRequest
         $kode_pelanggan = $this->route('kode_pelanggan');
         return [
             'kode_pelanggan' => 'required|unique:pelanggan,kode_pelanggan,' . $kode_pelanggan . ',kode_pelanggan',
-            'nama_pelanggan' => 'required',
+            'nama' => 'required',
             'alamat' => 'required',
             'telepon' => 'required',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'kode_pelanggan.required' => 'Kode pelanggan wajib diisi.',
+            'kode_pelanggan.unique' => 'Kode pelanggan sudah digunakan.',
+            'nama.required' => 'Nama pelanggan wajib diisi.',
+            'alamat.required' => 'Alamat wajib diisi.',
+            'telepon.required' => 'Telepon wajib diisi.',
         ];
     }
 }

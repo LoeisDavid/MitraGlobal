@@ -29,31 +29,64 @@
                 @csrf
                 @method('PUT')
                 <div class="card-body">
-                    <!-- select -->
-                    <div class="form-group">
-                        <label for="selectBarang">Barang</label>
-                        <select name="kode_barang"
-                                id="selectBarang"
-                                class="form-control selectBarang"
-                                required>
-
-                            <option value="">-- Pilih Barang --</option>
-
-                            @foreach ($barang as $row)
-                                <option value="{{ $row->kode_barang }}" {{ $detil->barang->kode_barang == $row->kode_barang ? 'selected' : '' }}>
-                                    {{ $row->nama }} - Rp. {{ number_format($row->harga_jual, 0, ',', '.') }}
-                                </option>
-                            @endforeach
-
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="qty">Qty</label>
-                        <input type="number" class="form-control" value="{{ $detil->jumlah }}" id="qty" name="qty" placeholder="Masukkan Jumlah Barang">
-                    </div>
-                    <div class="form-group">
-                        <label for="diskon">Diskon</label>
-                        <input type="number" class="form-control" value="{{ $detil->diskon }}" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <!-- select -->
+                            <div class="form-group">
+                                <label for="selectBarang @error('kode_barang') is-invalid
+                                @enderror">Barang<span class="text-danger">*</span></label>
+                                <select name="kode_barang"
+                                        id="selectBarang"
+                                        class="form-control"
+                                        required>
+                                </select>
+                                @error('kode_barang')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Merk</label>
+                                <select id="filterMerk" class="form-control select2merk">
+                                    <option value="">-- Semua Merk --</option>
+                                    @foreach ($merk as $m)
+                                        <option value="{{ $m->kode_merk }}">{{ $m->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Kategori</label>
+                                <select id="filterKategori" class="form-control select2kategori">
+                                    <option value="">-- Semua Kategori --</option>
+                                    @foreach ($kategori as $k)
+                                        <option value="{{ $k->kode_kategori }}">{{ $k->nama }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="qty">Qty<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('qty') is-invalid
+                                @enderror" value="{{ old('qty', $detil->jumlah) }}" id="qty" name="qty" placeholder="Masukkan Jumlah Barang" required>
+                            @error('qty')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="diskon">Diskon</label>
+                                <input type="number" class="form-control @error('diskon') is-invalid
+                                @enderror" value="{{ old('diskon', $detil->diskon) }}" id="diskon" name="diskon" placeholder="Masukkan Diskon Barang">
+                            @error('diskon')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            </div>
+                        </div>
                     </div>
                 <!-- /.card-body -->
                 </div>
@@ -71,11 +104,64 @@
     <!-- Select2 JS -->
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
-        $(document).ready(function() {
-            $('.selectBarang').select2({
-                theme: 'bootstrap4',
-                placeholder: '-- Pilih Barang --',
-            });
+        // KATEGORI & MERK
+        $('.select2merk').select2({
+            theme: 'bootstrap4',
+            placeholder: '-- Cari merk --',
+            allowClear: true
         });
+
+        $('.select2kategori').select2({
+            theme: 'bootstrap4',
+            placeholder: '-- Cari kategori --',
+            allowClear: true
+        });
+
+        // SELECT BARANG AJAX
+    let selectBarang = $('#selectBarang').select2({
+        theme: 'bootstrap4',
+        placeholder: '-- Cari barang --',
+        ajax: {
+            url: "{{ route('nota_barang.ajaxBarang') }}",
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return {
+                    search: params.term,
+                    page: params.page || 1,
+                    kode_merk: $('#filterMerk').val(),
+                    kode_kategori: $('#filterKategori').val()
+                };
+            },
+            processResults: function (data, params) {
+                return {
+                    results: data.results,
+                    pagination: { more: data.pagination.more }
+                };
+            }
+        }
+    });
+
+    // ==============================
+    // 🔥 SET BARANG LAMA (EDIT)
+    // ==============================
+    let selectedBarang = {
+        id: "{{ $detil->barang->kode_barang }}",
+        text: "{{ $detil->barang->kode_barang }} - {{ $detil->barang->nama }}"
+    };
+
+    let option = new Option(
+        selectedBarang.text,
+        selectedBarang.id,
+        true,
+        true
+    );
+
+    selectBarang.append(option).trigger('change');
+
+    // SET FILTER MERK & KATEGORI
+    $('#filterMerk').val("{{ $detil->barang->merk_kode_merk }}").trigger('change');
+    $('#filterKategori').val("{{ $detil->barang->kategori_kode_kategori }}").trigger('change');
+
     </script>
 @endpush

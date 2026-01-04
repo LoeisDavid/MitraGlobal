@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreKategoriRequest;
+use App\Http\Requests\UpdateKategoriRequest;
 use App\Models\Kategori_model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -62,26 +64,22 @@ public function index(Request $request)
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreKategoriRequest $request)
     {
-        $request->validate([
-            'nama' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $kode_kategori = $this->generateKodeKategori($request->nama);
+        $kode_kategori = $this->generateKodeKategori($validated['nama']);
 
         try {
             Kategori_model::create([
                 'kode_kategori' => Str::upper($kode_kategori),
-                'nama' => $request->nama,
+                'nama' => $validated['nama'],
             ]);
 
             return redirect()->route('kategori.index')->with('success', 'Data kategori berhasil disimpan.');
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data kategori: ' . $e->getMessage()]);
         }
-
-        return redirect()->route('kategori.index');
     }
 
     /**
@@ -104,18 +102,16 @@ public function index(Request $request)
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateKategoriRequest $request, string $id)
     {
-        $request->validate([
-            'nama' => 'required',
-        ]);
+        $validated = $request->validated();
 
-        $kode_kategori = $this->generateKodeKategori($request->nama);
+        $kode_kategori = $this->generateKodeKategori($validated['nama']);
 
         try {
             Kategori_model::where('kode_kategori', $id)->update([
                 'kode_kategori' => Str::upper($kode_kategori),
-                'nama' => $request->nama,
+                'nama' => $validated['nama'],
             ]);
 
             return redirect()->route('kategori.index')->with('success', 'Data kategori berhasil diperbarui.');
@@ -138,7 +134,7 @@ public function index(Request $request)
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan saat mengambil data kategori: ' . $e->getMessage()]);
         }
-        
-        return redirect()->route('kategori.index');
+
+        return redirect()->route('kategori.index')->with('success', 'Data kategori berhasil dihapus.'); 
     }
 }
