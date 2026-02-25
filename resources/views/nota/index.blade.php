@@ -18,7 +18,7 @@
               <div class="card-header">
                 <h3 class="card-title p-1">Data Nota</h3>
 
-                <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex justify-content-end align-items-center">
                     <!-- Tombol Tambah Nota -->
                     <a href="{{ route("nota.create") }}" class="btn btn-primary btn-sm mr-2">
                         <i class="fas fa-plus mr-1"></i> Tambah Nota
@@ -26,10 +26,10 @@
                     
                     <!-- Form Pencarian -->
                     @php
-    $hasSearch = request()->filled('keyword')
-               || request()->filled('status')
-               || request()->filled('bulan');
-@endphp
+                    $hasSearch = request()->filled('keyword')
+                              || request()->filled('status')
+                              || request()->filled('bulan');
+                @endphp
 
 <form class="d-flex align-items-center">
 
