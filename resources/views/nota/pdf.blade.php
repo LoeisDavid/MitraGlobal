@@ -1,3 +1,5 @@
+pada halaman pdf dibawah ini, ubah agar format setiap halaman bagian atas(header) selalu teerdapat informasi perusahaan seperti pada halaman pertama, dan dibagian bawah ada ttd. jika halaman berpindah llakukan hal yg sama, jadi yang berbeda hanya detail barangnya melanjutkan dari barang sebelumnya
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +15,7 @@
         .header-table {
             width: 100%;
             border-bottom: 1px solid #333;
-            padding-bottom: 20px;
+            padding-bottom: 10px;
         }
         .header-table td {
             vertical-align: top;
@@ -21,7 +23,6 @@
         .title {
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
         }
         .status-badge {
             background-color: #28a745;
@@ -36,17 +37,16 @@
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
         .items-table th {
-    border-top: 2px solid #333;
-    border-bottom: 2px solid #333;
-    padding: 10px 5px;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    /*padding: 1px 5px;*/
     text-align: left;
 }
 
         .items-table td {
-    padding: 15px 5px;
+    /*padding: 1px 5px;*/
     background-color: #ffffff;
 }
 
@@ -58,92 +58,148 @@
         .font-bold { font-weight: bold; }
 
         /* Ringkasan Total */
-        .summary-table {
-            width: 40%;
-            float: right;
-            margin-top: 30px;
-            border-collapse: collapse;
-        }
+        .summary-wrapper {
+    width: 100%;
+    border-top: 1px solid #333; /* Garis full kiri ke kanan */
+    margin-top: 10px;
+    padding-top: 5px;
+}
+
+.summary-table {
+    width: 40%;
+    float: right;
+    border-collapse: collapse;
+}
+
         .summary-table td {
-            padding: 8px 5px;
-            border-bottom: 1px solid #333;
+            padding: 5px 5px;
         }
+
+        @page {
+        size: A5 portrait;
+        margin: 15px;
+    }
     </style>
 </head>
 <body>
+    @php
+    $chunks = $detils->chunk(10); // 10 item per halaman
+    $no = 1;
+@endphp
 
-    <table class="header-table">
+@foreach($chunks as $chunk)
+@php
+
+$totalDiskon = 0;
+    $subtotal = 0;
+    $total = 0;
+@endphp
+{{-- ================= HEADER (REPEAT SETIAP HALAMAN) ================= --}}
+<table class="header-table">
+    <tr>
+        <td width="35%">
+            <div class="title">Mitra Global Abadi</div>
+            <div>SAMARINDA</div>
+            <div>Telp: 082190215433</div>
+        </td>
+
+        <td width="35%">
+            <div style="margin-top: 20px;">Pelanggan</div>
+            <div class="font-bold">{{ $nota->pelanggan->nama }}</div>
+            <div>{{ $nota->pelanggan->alamat }}</div>
+            <div>Telepon: {{ $nota->pelanggan->telepon }}</div>
+        </td>
+        <td width="30%" class="text-right">
+            <div>Tanggal: {{ \Carbon\Carbon::parse($nota->tanggal)->translatedFormat('d F Y') }}</div>
+            <div style="margin-top: 20px;">
+                <span class="font-bold">No Nota #{{ $nota->no_nota }}</span><br>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+{{-- ================= TABEL BARANG ================= --}}
+<table class="items-table">
+    <thead>
         <tr>
-            <td width="35%">
-    <div class="title">Mitra Global</div>
-    <div>JL PM NOOR RAPAK BINUANG 2, SAMPING POM BENSIN NO 32 SAMARINDA</div>
-    <div>Telp: 082190215433</div>
-
-    <div style="margin-top:10px;">Pegawai</div>
-    <div class="font-bold">{{ $nota->pegawai->nama }}</div>
-</td>
-
-            <td width="35%">
-                <div style="margin-top: 30px;">Pelanggan</div>
-                <div class="font-bold">{{ $nota->pelanggan->nama }}</div>
-                <div>{{ $nota->pelanggan->alamat }}</div>
-                <div>Telepon: {{ $nota->pelanggan->telepon }}</div>
+            <th width="10%">No.</th>
+            <th width="50%">Nama Barang</th>
+            <th width="10%">Qty</th>
+            <th width="10%">Harga satuan</th>
+            <th width="10%">Diskon</th>
+            <th width="10%" class="text-right">Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($chunk as $row)
+        @php
+            $rowSubtotal = $row->harga * $row->jumlah;
+            $rowDiskon = $rowSubtotal * ($row->diskon / 100);
+            $subtotal += $rowSubtotal;
+            $totalDiskon += $rowDiskon;
+            $total = $subtotal - $totalDiskon;
+        @endphp
+        <tr>
+            <td>{{ $no++ }}</td>
+            <td>
+                {{ $row->barang->kategori->nama }}-
+                {{ $row->barang->merk->nama }}-
+                {{ $row->barang->nama }}
             </td>
-            <td width="30%" class="text-right">
-                <div>Tanggal: {{ \Carbon\Carbon::parse($nota->tanggal)->translatedFormat('d F Y') }}</div>
-                <div style="margin-top: 20px;">
-                    <span class="font-bold">No Nota #{{ $nota->no_nota }}</span><br>
-                </div>
+            <td>{{ $row->jumlah }}</td>
+            <td>{{ number_format($row->harga, 0, ',', '.') }}</td>
+            <td>{{ $row->diskon }}%</td>
+            <td class="text-right">
+                {{ number_format($row->harga * $row->jumlah - ($row->harga * $row->jumlah * $row->diskon / 100), 0, ',', '.') }}
             </td>
         </tr>
-    </table>
+        @endforeach
+    </tbody>
+</table>
 
-    <table class="items-table">
-        <thead>
-            <tr>
-                <th width="40%">Nama Barang</th>
-                <th width="10%" class="text-right">Qty</th>
-                <th width="20%" class="text-right">Harga satuan</th>
-                <th width="15%" class="text-right">Diskon</th>
-                <th width="15%" class="text-right">Subtotal</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($detils as $row)
-            <tr>
-                <td>{{ $row->barang->nama }}</td>
-                <td class="text-right">{{ $row->jumlah }}</td>
-                <td class="text-right">Rp. {{ number_format($row->harga, 0, ',', '.') }}</td>
-                <td class="text-right">{{ $row->diskon }}%</td>
-                <td class="text-right">Rp. {{ number_format($row->harga * $row->jumlah - ($row->harga * $row->jumlah * $row->diskon / 100), 0, ',', '.') }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="5" class="text-center">Tidak ada data barang.</td>
-            </tr>
-            @endforelse
-        </tbody>
+{{-- ================= FOOTER (REPEAT SETIAP HALAMAN) ================= --}}
+<div style="width: 100%;">
+    <div class="summary-wrapper">
+    <table class="summary-table">
+        <tr>
+            <td class="font-bold">Subtotal:</td>
+            <td class="text-right">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td class="font-bold">Diskon:</td>
+            <td class="text-right">Rp. {{ number_format($totalDiskon, 0, ',', '.') }}</td>
+        </tr>
+        <tr>
+            <td class="font-bold">Total:</td>
+            <td class="text-right">Rp. {{ number_format($total, 0, ',', '.') }}</td>
+        </tr>
     </table>
+</div>
 
-    <div style="width: 100%;">
-        <table class="summary-table">
+    <div style="width: 100%; margin-top: 20px; clear: both;">
+        <table style="width: 100%;">
             <tr>
-                <td colspan="2" style="border:none; color:#888; padding-bottom:15px;">Tanggal : {{ \Carbon\Carbon::parse($nota->tanggal)->translatedFormat('d/m/Y') }}</td>
-            </tr>
-            <tr>
-                <td class="font-bold">Subtotal:</td>
-                <td class="text-right">Rp. {{ number_format($subtotal, 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td class="font-bold">Diskon:</td>
-                <td class="text-right">Rp. {{ number_format($totalDiskon, 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td class="font-bold">Total:</td>
-                <td class="text-right">Rp. {{ number_format($total, 0, ',', '.') }}</td>
+                <td style="text-align: left;">
+                    <p style="margin-left: 20px;">Hormat Kami,</p>
+                    <br><br>
+                    (_________________)
+                </td>
+                <td style="text-align: right">
+                    <p style="margin-right: 35px;">Penerima,</p>
+                    <br><br>
+                    (_________________)
+                </td>
             </tr>
         </table>
     </div>
+</div>
 
+@if(!$loop->last)
+    <div style="page-break-after: always;"></div>
+@endif
+
+@endforeach
 </body>
 </html>
