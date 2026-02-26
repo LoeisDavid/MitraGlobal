@@ -1,5 +1,3 @@
-pada halaman pdf dibawah ini, ubah agar format setiap halaman bagian atas(header) selalu teerdapat informasi perusahaan seperti pada halaman pertama, dan dibagian bawah ada ttd. jika halaman berpindah llakukan hal yg sama, jadi yang berbeda hanya detail barangnya melanjutkan dari barang sebelumnya
-
 <!DOCTYPE html>
 <html>
 <head>
