@@ -90,15 +90,29 @@
                         <!-- harga jual -->
                         <div class="col-sm-12">
                             <div class="form-group">
-                                <label for="harga_jual">Harga Jual<span class="text-danger">*</span></label>
-                                <input type="number" class="form-control @error('harga_jual') is-invalid
-                                @enderror" value="{{ old('harga_jual', number_format($barang->harga_jual, 0, ',', '.')) }}" id="harga_jual" name="harga_jual" placeholder="Masukkan Harga Jual">
-                                @error('harga_jual')
+                                <label for="harga_beli">Harga Beli<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('harga_beli') is-invalid
+                                @enderror" value="{{ old('harga_beli', number_format($barang->harga_beli, 0, ',', '.')) }}" id="harga_beli" name="harga_beli" placeholder="Masukkan Harga Jual">
+                                @error('harga_beli')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
                         <!-- end harga jual -->
+
+                        <!-- diskon -->
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="diskon">Diskon<span class="text-danger">*</span></label>
+                                <input type="number" class="form-control @error('diskon') is-invalid
+                                @enderror" value="{{ old('diskon', number_format($barang->diskon, 0, ',', '.')) }}" id="diskon" name="diskon" placeholder="Masukkan Diskon">
+                                @error('diskon')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <span class="text-muted">Diskon dalam persen (%)</span>
+                            </div>
+                        </div>
+                        <!-- diskon -->
 
                         <!-- stok -->
                         <div class="col-sm-12">
