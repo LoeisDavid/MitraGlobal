@@ -274,7 +274,7 @@ public function update(UpdateNotaRequest $request, string $no_nota)
 
         $pdf = Pdf::loadView('nota.pdf', compact(
             'nota', 'detils', 'subtotal', 'totalDiskon', 'total'
-        ))->setPaper('A5', 'landscape');
+        ))->setPaper([0, 0, 590, 396], 'landscape');
 
         return $pdf->stream('Nota#'.$no_nota.'.pdf');
 
@@ -305,7 +305,7 @@ public function update(UpdateNotaRequest $request, string $no_nota)
         }
         $total = $subtotal - $totalDiskon;
         $pdf = Pdf::loadView('nota.pdf', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'))
-        ->setPaper('A5', 'landscape');
+        ->setPaper([0, 0, 684, 396], 'landscape');
         return $pdf->download('Nota#'.$no_nota.'.pdf');
     }
 

@@ -6,13 +6,13 @@
 
     <style>
         @page {
-            size: 9.5in 5.5in;
+            size: 8.2in 5.5in;
             margin: 15px;
         }
 
         body {
             font-family: sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             color: #333;
             line-height: 1.4;
         }
@@ -20,7 +20,7 @@
         .header-table {
             width: 100%;
             border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
         }
 
         .header-table td {
@@ -62,14 +62,14 @@
         .summary-wrapper {
             width: 100%;
             border-top: 1px solid #333;
-            margin-top: 8px;
+            margin-top: 4px;
             padding-top: 4px;
             clear: both;
         }
 
         .summary-table {
             width: 35%;
-            float: right;
+            margin-left: auto;
             border-collapse: collapse;
         }
 
@@ -79,7 +79,7 @@
 
         .ttd-wrapper {
             width: 100%;
-            margin-top: 18px;
+            margin-top: 8px;
             clear: both;
         }
 
@@ -90,13 +90,18 @@
         .ttd-table td {
             vertical-align: top;
         }
+
+        table {
+            table-layout: fixed;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 
 <body>
 
 @php
-    $chunks = $detils->chunk(8); // LEBIH AMAN utk landscape
+    $chunks = $detils->chunk(10); // LEBIH AMAN utk landscape
     $no = 1;
 @endphp
 
@@ -139,12 +144,12 @@
 <table class="items-table">
     <thead>
         <tr>
-            <th width="8%">No.</th>
-            <th width="52%">Nama Barang</th>
-            <th width="10%">Qty</th>
-            <th width="10%">Harga</th>
-            <th width="10%">Diskon</th>
-            <th width="10%" class="text-right">Subtotal</th>
+            <th width="6%">No.</th>
+            <th width="46%">Nama Barang</th>
+            <th width="8%">Qty</th>
+            <th width="12%">Harga</th>
+            <th width="8%">Diskon</th>
+            <th width="20%" class="text-right">Subtotal</th>
         </tr>
     </thead>
 
@@ -202,13 +207,13 @@
             <tr>
                 <td style="text-align:left;">
                     <p style="margin-left:20px;">Hormat Kami,</p>
-                    <br><br><br>
+                    <br><br>
                     (_________________)
                 </td>
 
                 <td style="text-align:right;">
                     <p style="margin-right:35px;">Penerima,</p>
-                    <br><br><br>
+                    <br><br>
                     (_________________)
                 </td>
             </tr>
