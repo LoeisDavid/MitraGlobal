@@ -35,23 +35,31 @@ class NotaBarang extends Controller
 public function ajaxBarang(Request $request)
 {
     $query = Barang_model::query()
-        ->select('kode_barang', 'nama', 'harga_jual')
+        ->select(
+            'kode_barang',
+            'nama',
+            'harga_beli',
+            'diskon',
+            'stok'
+        )
         ->where('stok', '>', 0);
 
-    // search kode ATAU nama barang
+    // SEARCH kode / nama
     if ($request->search) {
-        $query->where(function ($q) use ($request) {
-            $q->where('kode_barang', $request->search)
-              ->orWhere('nama', 'like', '%' . $request->search . '%');
+        $search = $request->search;
+
+        $query->where(function ($q) use ($search) {
+            $q->where('kode_barang', 'like', "%{$search}%")
+              ->orWhere('nama', 'like', "%{$search}%");
         });
     }
 
-    // filter merk
+    // FILTER MERK
     if ($request->kode_merk) {
         $query->where('merk_kode_merk', $request->kode_merk);
     }
 
-    // filter kategori
+    // FILTER KATEGORI
     if ($request->kode_kategori) {
         $query->where('kategori_kode_kategori', $request->kode_kategori);
     }
@@ -61,8 +69,15 @@ public function ajaxBarang(Request $request)
     return response()->json([
         'results' => $barang->map(function ($row) {
             return [
-                'id'   => $row->kode_barang,
-                'text' => $row->kode_barang . ' - ' . $row->nama . ' - Rp ' . number_format($row->harga_jual, 0, ',', '.')
+                'id'          => $row->kode_barang,
+                'text'        => $row->kode_barang . ' - ' . $row->nama .
+                                 ' (Stok: ' . $row->stok . ')' .
+                                 ' - Rp ' . number_format($row->harga_beli, 0, ',', '.'),
+
+                // DATA DETAIL UNTUK JS
+                'harga_beli'  => $row->harga_beli,
+                'diskon'      => $row->diskon ?? 0,
+                'stok'        => $row->stok,
             ];
         }),
         'pagination' => [
@@ -94,7 +109,7 @@ public function ajaxBarang(Request $request)
             NotajualDetil_model::create([
                 'notajual_no_nota'    => $request->route('id'),
                 'barang_kode_barang'  => $validated['kode_barang'],
-                'harga'               => $barang->harga_jual,
+                'harga'               => $validated['harga'],
                 'jumlah'              => $validated['qty'],
                 'diskon'              => $validated['diskon'],
             ]);

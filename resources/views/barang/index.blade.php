@@ -48,7 +48,9 @@
                       <th>Nama Barang</th>
                       <th>Kategori</th>
                       <th>Merek</th>
-                      <th>Harga Jual</th>
+                      <th>Harga Beli</th>
+                      <th>Diskon</th>
+                      <th>Modal</th>
                       <th>Stok</th>
                       <th class="text-center">Aksi</th>
                     </tr>
@@ -60,7 +62,9 @@
                       <td>{{ $barang->nama }}</td>
                       <td>{{ $barang->kategori->nama }}</td>
                       <td>{{ $barang->merk->nama }}</td>
-                      <td>Rp. {{ number_format($barang->harga_jual, 0, ',', '.') }}</td>
+                      <td>Rp. {{ number_format($barang->harga_beli, 0, ',', '.') }}</td>
+                      <td>{{ number_format($barang->diskon, 0, ',', '.') }}%</td>
+                      <td>Rp. {{ number_format($barang->modal(), 0, ',', '.') }}</td>
                       <td>{{ $barang->stok }}</td>
                       <td class="text-center">
                         <a href="{{ route('barang.edit', ['kode_barang' => $barang->kode_barang]) }}" class="btn btn-sm btn-warning text-white"><i class="fas fa-edit"></i></a>

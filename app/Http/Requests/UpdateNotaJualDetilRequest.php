@@ -25,6 +25,7 @@ class UpdateNotaJualDetilRequest extends FormRequest
         'kode_barang' => 'required|string|exists:barang,kode_barang',
         'qty'         => 'required|integer|min:1',
         'diskon'      => 'required|numeric|min:0|max:100',
+        'harga' => 'required|min:0',
         ];
     }
 
@@ -40,6 +41,8 @@ class UpdateNotaJualDetilRequest extends FormRequest
             'diskon.numeric' => 'Diskon harus berupa angka.',
             'diskon.min' => 'Diskon tidak boleh kurang dari 0%.',
             'diskon.max' => 'Diskon tidak boleh lebih dari 100%.',
+            'harga.min' => 'Nominal tidak boleh kurang dari 0',
+            'harga.required' => 'Harga tidak boleh dikosongi',
         ];
     }
 }

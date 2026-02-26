@@ -19,13 +19,19 @@ class Barang_model extends Model
         'kode_barang',
         'barcode',
         'nama',
-        'harga_jual',
+        'harga_beli',
+        'diskon',
         'stok',
         'merk_kode_merk',
         'kategori_kode_kategori',
     ];
 
     /* ================= RELATIONSHIPS ================= */
+
+    public function modal()
+{
+    return $this->harga_beli - ($this->harga_beli * ($this->diskon / 100));
+}
 
     public function merk()
     {
