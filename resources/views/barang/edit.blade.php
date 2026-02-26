@@ -92,7 +92,7 @@
                             <div class="form-group">
                                 <label for="harga_beli">Harga Beli<span class="text-danger">*</span></label>
                                 <input type="number" class="form-control @error('harga_beli') is-invalid
-                                @enderror" value="{{ old('harga_beli', number_format($barang->harga_beli, 0, ',', '.')) }}" id="harga_beli" name="harga_beli" placeholder="Masukkan Harga Jual">
+                                @enderror" value="{{ old('harga_beli', $barang->harga_beli) }}" id="harga_beli" name="harga_beli" placeholder="Masukkan Harga Jual">
                                 @error('harga_beli')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

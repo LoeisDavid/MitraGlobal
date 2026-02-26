@@ -196,7 +196,7 @@ public function ajaxBarang(Request $request)
 
             $detil->update([
                 'barang_kode_barang' => $barangBaru->kode_barang,
-                'harga'              => $barangBaru->harga_jual,
+                'harga'              => $validated['harga'],
                 'jumlah'             => $validated['qty'],
                 'diskon'             => $validated['diskon'],
             ]);
