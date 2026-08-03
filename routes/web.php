@@ -66,6 +66,7 @@ Route::prefix('nota')->name('nota.')->group(function () {
     Route::put('/{no_nota}/finalize', [Nota::class, 'finalize'])->name('finalize');
     Route::get('/{no_nota}/preview', [Nota::class, 'preview'])->name('preview');
     Route::get('/{no_nota}/download', [Nota::class, 'download'])->name('download');
+    Route::get('/{no_nota}/print', [Nota::class, 'print'])->name('print');
 });
 
 Route::prefix('nota_barang')->name('nota_barang.')->group(function () {
