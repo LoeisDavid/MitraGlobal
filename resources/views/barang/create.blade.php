@@ -40,7 +40,7 @@
                         <div class="col-sm-12">
                             <div class="form-group">
                                 <label for="nama_barang">Nama Barang<span class="text-danger">*</span></label>
-                                <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_barang" name="nama" placeholder="Masukkan Nama Barang" value="{{ old("nama") }}" required>
+                                <input type="text" class="form-control @error('nama') is-invalid @enderror" id="nama_barang" name="nama" placeholder="Masukkan Nama Barang" value="{{ old("nama") }}" required autofocus>
                                 @error('nama')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -154,6 +154,15 @@
                 theme: 'bootstrap4',
                 placeholder: "-- Pilih Merk --",
                 allowClear: true
+            });
+
+            $(document).on('select2:open', function () {
+                setTimeout(function () {
+                    let searchField = document.querySelector('.select2-container--open .select2-search__field');
+                    if (searchField) {
+                        searchField.focus();
+                    }
+                }, 0);
             });
         });
     </script>

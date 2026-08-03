@@ -2,25 +2,47 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Nota #{{ $nota->no_nota }}</title>
-
+    <title></title>
     <style>
+
+        /*
+        ============================================
+        KHUSUS PDF (DomPDF)
+        Tidak dipakai untuk print browser
+        ============================================
+        */
+        /*
         @page {
-            size: 9.5in 5.5in;
-            margin: 5mm 10mm 5mm 10mm;
+            size: 8.2in 5.5in;
+            margin: 10px;
         }
+        */
 
         body {
             font-family: sans-serif;
             font-size: 11px;
             color: #333;
             line-height: 1.4;
+            margin: 0;
+        }
+
+        /*
+        ============================================
+        KHUSUS PRINT BROWSER
+        ============================================
+        */
+        @media print {
+            
+            .no-break {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
         }
 
         .header-table {
             width: 100%;
             border-bottom: 1px solid #333;
-            padding-bottom: 10px;
+            padding-bottom: 1px;
         }
 
         .header-table td {
@@ -46,14 +68,13 @@
         }
 
         .items-table td {
-            padding: 2px 4px;
+           /* padding: 2px 4px;*/
         }
 
         .text-right { text-align: right !important; }
         .text-center { text-align: center !important; }
         .font-bold { font-weight: bold; }
 
-        /* Hindari pecah halaman */
         .no-break {
             page-break-inside: avoid;
             break-inside: avoid;
@@ -96,34 +117,27 @@
             word-wrap: break-word;
         }
 
-        /* Hilangkan header/footer bawaan browser jika print langsung dari web */
-  @media print {
-    html, body {
-      width: 9.5in;
-      height: 11in;
-    }
-  }
     </style>
 </head>
 
 <body>
 
 @php
-    $chunks = $detils->chunk(10); // LEBIH AMAN utk landscape
-    $no = 1;
+    $chunks = $detils->chunk(9);
+    
 @endphp
 
 @foreach($chunks as $chunk)
 
 @php
+    $no = 1;
     $subtotal = 0;
     $totalDiskon = 0;
     $total = 0;
 @endphp
 
 <!-- ================= HEADER ================= -->
- @if ($loop->first)
- <table class="header-table">
+<table class="header-table">
     <tr>
         <td width="35%">
             <div class="title">Mitra Global Abadi</div>
@@ -132,31 +146,30 @@
         </td>
 
         <td width="35%">
-            <div style="margin-top: 20px;">Pelanggan</div>
+            <div style="margin-top: 10px;">Pelanggan</div>
             <div class="font-bold">{{ $nota->pelanggan->nama }}</div>
             <div>{{ $nota->pelanggan->alamat }}</div>
             <div>Telepon: {{ $nota->pelanggan->telepon }}</div>
         </td>
 
         <td width="30%" class="text-right">
-            <div>Tanggal:
+            <div>
+                Tanggal:
                 {{ \Carbon\Carbon::parse($nota->tanggal)->translatedFormat('d F Y') }}
             </div>
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 10px;">
                 <span class="font-bold">No Nota #{{ $nota->no_nota }}</span>
             </div>
         </td>
     </tr>
 </table>
- @endif
-
 
 <!-- ================= ITEMS ================= -->
 <table class="items-table">
     <thead>
         <tr>
-            <th width="6%">No.</th>
-            <th width="46%">Nama Barang</th>
+            <th width="3%">No.</th>
+            <th width="49%">Nama Barang</th>
             <th width="8%">Qty</th>
             <th width="12%">Harga</th>
             <th width="8%">Diskon</th>
@@ -194,8 +207,9 @@
 </table>
 
 <!-- ================= FOOTER + TTD ================= -->
-@if ($loop->last)
-<div class="summary-wrapper">
+<div class="no-break">
+
+    <div class="summary-wrapper">
         <table class="summary-table">
             <tr>
                 <td class="font-bold">Subtotal:</td>
@@ -222,20 +236,27 @@
                 </td>
 
                 <td style="text-align:right;">
-                    <p style="margin-right:35px;">Penerima,</p>
+                    <p style="margin-right:33px;">Penerima,</p>
                     <br><br>
                     (_________________)
                 </td>
             </tr>
         </table>
     </div>
-@endif
+
+</div>
 
 @if(!$loop->last)
     <div style="page-break-after: always;"></div>
 @endif
 
 @endforeach
+
+<script>
+    window.onload = function() {
+        window.print();
+    }
+</script>
 
 </body>
 </html>

@@ -274,7 +274,7 @@ public function update(UpdateNotaRequest $request, string $no_nota)
 
         $pdf = Pdf::loadView('nota.pdf', compact(
             'nota', 'detils', 'subtotal', 'totalDiskon', 'total'
-        ))->setPaper('A5', 'landscape');
+        ))->setPaper([0, 0, 684, 792], 'potrait'); // 9.5in x 11in in points
 
         return $pdf->stream('Nota#'.$no_nota.'.pdf');
 
@@ -305,7 +305,7 @@ public function update(UpdateNotaRequest $request, string $no_nota)
         }
         $total = $subtotal - $totalDiskon;
         $pdf = Pdf::loadView('nota.pdf', compact('nota', 'detils', 'subtotal', 'totalDiskon', 'total'))
-        ->setPaper('A5', 'landscape');
+        ->setPaper([0, 0, 684, 396], 'landscape');
         return $pdf->download('Nota#'.$no_nota.'.pdf');
     }
 
@@ -328,6 +328,18 @@ public function update(UpdateNotaRequest $request, string $no_nota)
             ->route('nota.index')
             ->with('error', 'Nota gagal dihapus (masih digunakan)');
     }
+}
+   public function print($no_nota)
+{
+    $nota = \App\Models\Nota_model::with([
+        'pelanggan',
+        'detil.barang.kategori',
+        'detil.barang.merk'
+    ])->where('no_nota', $no_nota)->firstOrFail();
+
+    $detils = $nota->detil ?? collect();
+
+    return view('nota.print', compact('nota', 'detils'));
 }
 
 }
