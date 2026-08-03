@@ -274,7 +274,7 @@ public function update(UpdateNotaRequest $request, string $no_nota)
 
         $pdf = Pdf::loadView('nota.pdf', compact(
             'nota', 'detils', 'subtotal', 'totalDiskon', 'total'
-        ))->setPaper([0, 0, 660, 396], 'landscape');
+        ))->setPaper([0, 0, 684, 792], 'potrait'); // 9.5in x 11in in points
 
         return $pdf->stream('Nota#'.$no_nota.'.pdf');
 

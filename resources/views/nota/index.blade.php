@@ -115,7 +115,7 @@
                             <a href="{{ route("nota.show", $row->no_nota) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
                         @else
                         <a href="{{ route("nota.show", $row->no_nota) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
-                        <a href="{{ route("nota.print", $row->no_nota) }}" class="btn btn-sm btn-success text-white" target="_blank"><i class="fas fa-print"></i></a>
+                        <a href="{{ route("nota.preview", $row->no_nota) }}" class="btn btn-sm btn-success text-white" target="_blank"><i class="fas fa-print"></i></a>
                         <a href="{{ route("nota.download", $row->no_nota) }}" class="btn btn-sm btn-secondary text-white"><i class="fas fa-download"></i></a>
                         @endif
                         

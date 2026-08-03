@@ -6,8 +6,8 @@
 
     <style>
         @page {
-            size: 8.2in 5.5in;
-            margin: 15px;
+            size: 9.5in 5.5in;
+            margin: 5mm 10mm 5mm 10mm;
         }
 
         body {
@@ -95,6 +95,14 @@
             table-layout: fixed;
             word-wrap: break-word;
         }
+
+        /* Hilangkan header/footer bawaan browser jika print langsung dari web */
+  @media print {
+    html, body {
+      width: 9.5in;
+      height: 11in;
+    }
+  }
     </style>
 </head>
 
@@ -114,7 +122,8 @@
 @endphp
 
 <!-- ================= HEADER ================= -->
-<table class="header-table">
+ @if ($loop->first)
+ <table class="header-table">
     <tr>
         <td width="35%">
             <div class="title">Mitra Global Abadi</div>
@@ -139,6 +148,8 @@
         </td>
     </tr>
 </table>
+ @endif
+
 
 <!-- ================= ITEMS ================= -->
 <table class="items-table">
@@ -183,9 +194,8 @@
 </table>
 
 <!-- ================= FOOTER + TTD ================= -->
-<div class="no-break">
-
-    <div class="summary-wrapper">
+@if ($loop->last)
+<div class="summary-wrapper">
         <table class="summary-table">
             <tr>
                 <td class="font-bold">Subtotal:</td>
@@ -219,8 +229,7 @@
             </tr>
         </table>
     </div>
-
-</div>
+@endif
 
 @if(!$loop->last)
     <div style="page-break-after: always;"></div>
