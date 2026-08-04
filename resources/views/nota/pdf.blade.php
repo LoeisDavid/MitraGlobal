@@ -6,9 +6,9 @@
 
     <style>
         @page {
-            size: 9.5in 5.5in;
-            margin: 0;
-            padding: 0;
+            size: 7.5in 4.5in;
+            margin: 0px;
+            padding: 10;
         }
 
         body {
@@ -100,8 +100,8 @@
         /* Hilangkan header/footer bawaan browser jika print langsung dari web */
   @media print {
     html, body {
-      width: 9.5in;
-      height: 5.5in;
+      width: 7.5in;
+      height: 4.5in;
     }
   }
     </style>
@@ -110,7 +110,7 @@
 <body>
 
 @php
-    $chunks = $detils->chunk(20); // LEBIH AMAN utk landscape
+    $chunks = $detils->chunk(100); // LEBIH AMAN utk landscape
     $no = 1;
 @endphp
 

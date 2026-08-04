@@ -102,6 +102,7 @@
             width: 100%;
             margin-top: 8px;
             clear: both;
+            text-align: left;
         }
 
         .ttd-table {
@@ -123,20 +124,20 @@
 <body>
 
 @php
-    $chunks = $detils->chunk(9);
-    
+    $chunks = $detils->chunk(999); // LEBIH AMAN utk landscape
+    $no = 1;
 @endphp
 
 @foreach($chunks as $chunk)
 
 @php
-    $no = 1;
     $subtotal = 0;
     $totalDiskon = 0;
     $total = 0;
 @endphp
 
 <!-- ================= HEADER ================= -->
+ @if ($loop->first)
 <table class="header-table">
     <tr>
         <td width="35%">
@@ -163,6 +164,8 @@
         </td>
     </tr>
 </table>
+ @endif
+
 
 <!-- ================= ITEMS ================= -->
 <table class="items-table">
@@ -208,43 +211,50 @@
 
 <!-- ================= FOOTER + TTD ================= -->
 <div class="no-break">
+    @if ($loop->last)
+
+    
 
     <div class="summary-wrapper">
-        <table class="summary-table">
-            <tr>
-                <td class="font-bold">Subtotal:</td>
-                <td class="text-right">Rp {{ number_format($subtotal, 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td class="font-bold">Diskon:</td>
-                <td class="text-right">Rp {{ number_format($totalDiskon, 0, ',', '.') }}</td>
-            </tr>
-            <tr>
-                <td class="font-bold">Total:</td>
-                <td class="text-right font-bold">Rp {{ number_format($total, 0, ',', '.') }}</td>
-            </tr>
-        </table>
-    </div>
-
-    <div class="ttd-wrapper">
-        <table class="ttd-table">
-            <tr>
-                <td style="text-align:left;">
-                    <p style="margin-left:20px;">Hormat Kami,</p>
-                    <br><br>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr>
+            <!-- TTD -->
+            <td style="width:65%; vertical-align:top;">
+                <div style="margin-top:5px;">
+                    Penerima,
+                    <br><br><br><br>
                     (_________________)
-                </td>
+                </div>
+            </td>
 
-                <td style="text-align:right;">
-                    <p style="margin-right:33px;">Penerima,</p>
-                    <br><br>
-                    (_________________)
-                </td>
-            </tr>
-        </table>
-    </div>
-
+            <!-- Total -->
+            <td style="width:35%; vertical-align:top;">
+                <table class="summary-table" style="width:100%; margin-left:0;">
+                    <tr>
+                        <td class="font-bold">Subtotal:</td>
+                        <td class="text-right">
+                            Rp {{ number_format($subtotal,0,',','.') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Diskon:</td>
+                        <td class="text-right">
+                            Rp {{ number_format($totalDiskon,0,',','.') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">Total:</td>
+                        <td class="text-right font-bold">
+                            Rp {{ number_format($total,0,',','.') }}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </div>
+@endif
+
 
 @if(!$loop->last)
     <div style="page-break-after: always;"></div>
