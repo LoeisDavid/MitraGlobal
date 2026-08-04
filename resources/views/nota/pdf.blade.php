@@ -7,7 +7,8 @@
     <style>
         @page {
             size: 9.5in 5.5in;
-            margin: 5mm 10mm 5mm 10mm;
+            margin: 0;
+            padding: 0;
         }
 
         body {
@@ -100,7 +101,7 @@
   @media print {
     html, body {
       width: 9.5in;
-      height: 11in;
+      height: 5.5in;
     }
   }
     </style>
@@ -109,7 +110,7 @@
 <body>
 
 @php
-    $chunks = $detils->chunk(10); // LEBIH AMAN utk landscape
+    $chunks = $detils->chunk(20); // LEBIH AMAN utk landscape
     $no = 1;
 @endphp
 
